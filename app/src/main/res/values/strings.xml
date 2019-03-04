@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Rick and Morty Guide</string>
+    <string name="giphy_api_token">Cb3k2zOhaWFG6E7noZRCSeNl1WztxnfC</string>
+    <string name="searchView_hint">Character, Location, Episode, bla bla ..</string>
+    <string name="characterButtonText">Characters</string>
+    <string name="locationButtonText">Locations</string>
+    <string name="episodesButtonText">Episodes</string>
+
+    <string name="tab_1">Characters</string>
+    <string name="tab_2">Locations</string>
+    <string name="tab_3">Episodes</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

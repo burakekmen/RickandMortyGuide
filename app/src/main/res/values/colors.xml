@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="baseBackground">#f0f4c3</color>
+    <color name="baseSearchViewBackgroundColor">#d2e054</color>
+
+    <color name="tab1Color">#420259</color>
+    <color name="tab2Color">#90542F</color>
+    <color name="tab3Color">#70b347</color>
+
+</resources>
