@@ -1,14 +1,23 @@
 package com.burakekmen.rickandmortyguide.ui.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
+import com.burakekmen.rickandmortyguide.adapter.RcListFavouriteAdapter
+import com.burakekmen.rickandmortyguide.database.DatabaseHelper
+import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.network.ApiClient
 import com.burakekmen.rickandmortyguide.network.ApiInterface
+import kotlinx.android.synthetic.main.fragment_favourite.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class FavouriteFragment : Fragment() {
@@ -16,6 +25,10 @@ class FavouriteFragment : Fragment() {
     private var apiInterface: ApiInterface? = null
     private var utils: Utils? = null
     private var flayout: View? = null
+    private var dbHandler: DatabaseHelper? = null
+    private var favouriteList = mutableListOf<Int>()
+    private var singleLineFavouriteIds = ""
+    private var fragmentDurdurulduMu = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,18 +40,141 @@ class FavouriteFragment : Fragment() {
 
         acilisHazirlikYap()
 
+
+
         return flayout
     }
 
 
     private fun acilisHazirlikYap() {
         utils = Utils(context!!)
+        dbHandler = DatabaseHelper(context!!)
         apiInterface = ApiClient.client?.create(ApiInterface::class.java)
     }
 
 
-    private fun favorileriGetir() {
+    override fun onResume() {
+        if (fragmentDurdurulduMu) {
+            fragmentDurdurulduMu = false
+
+            if (utils!!.isOnline())
+                favorileriGetir()
+            else
+                utils!!.internetConnectionWarningShow()
+        }
+        super.onResume()
+    }
+
+
+    override fun onPause() {
+        fragmentDurdurulduMu = true
+        super.onPause()
 
     }
+
+    private fun favorileriGetir() {
+        favouriteList = dbHandler!!.getAllFavourites()
+        setFavouriteListToOneLineString()
+
+//        var dizi = Array(favouriteList.size) { i: Int -> i }
+//
+//        for (i in 0 until favouriteList.size) {
+//            dizi[i] = favouriteList[i]
+//        }
+
+        if (favouriteList.size > 1)
+            getFavourite(true)
+        else
+            getFavourite(false)
+    }
+
+
+    private fun getFavourite(isMulti: Boolean) {
+        utils!!.waitDialogShow()
+
+        if (isMulti) {
+            apiInterface?.getFavouriteCharacters(singleLineFavouriteIds.trim())
+                ?.enqueue(object : Callback<Array<CharacterModel>> {
+
+                    override fun onResponse(
+                        call: Call<Array<CharacterModel>>?,
+                        response: Response<Array<CharacterModel>>?
+                    ) {
+
+                        if (response!!.isSuccessful) {
+
+                            val response = response.body()
+
+
+                            val characterFavouriteListAdapter =
+                                RcListFavouriteAdapter(context, response!!.toMutableList())
+                            listeyeGonder(characterFavouriteListAdapter)
+
+                            utils?.waitDialogHide()
+                        } else {
+                            utils?.waitDialogHide()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Array<CharacterModel>>?, t: Throwable?) {
+
+                        Log.e("RICK HATA", t!!.message)
+                        utils?.waitDialogHide()
+                    }
+
+                })
+        } else {
+            apiInterface?.getFavouriteCharacter(singleLineFavouriteIds.trim())
+                ?.enqueue(object : Callback<CharacterModel> {
+
+                    override fun onResponse(
+                        call: Call<CharacterModel>?,
+                        response: Response<CharacterModel>?
+                    ) {
+
+                        if (response!!.isSuccessful) {
+
+                            val favouriteCharaacter = mutableListOf<CharacterModel>()
+                            favouriteCharaacter.add(response.body()!!)
+
+
+                            val characterFavouriteListAdapter =
+                                RcListFavouriteAdapter(context, favouriteCharaacter)
+                            listeyeGonder(characterFavouriteListAdapter)
+
+                            utils?.waitDialogHide()
+                        } else {
+                            utils?.waitDialogHide()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CharacterModel>?, t: Throwable?) {
+
+                        Log.e("RICK HATA", t!!.message)
+                        utils?.waitDialogHide()
+                    }
+
+                })
+        }
+    }
+
+
+    private fun setFavouriteListToOneLineString() {
+        singleLineFavouriteIds = favouriteList.joinToString()
+    }
+
+
+    @SuppressLint("WrongConstant")
+    fun listeyeGonder(adapter: RcListFavouriteAdapter) {
+        fragment_favourite_rcList.adapter = adapter
+        val fragmentActivity = activity!!
+        val myLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            fragmentActivity,
+            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            false
+        )
+        fragment_favourite_rcList.layoutManager = myLayoutManager
+    }
+
 
 }
