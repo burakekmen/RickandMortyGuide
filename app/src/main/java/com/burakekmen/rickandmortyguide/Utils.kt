@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
-import cn.pedant.SweetAlert.SweetAlertDialog
 import android.os.Handler
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.burakekmen.rickandmortyguide.ui.BaseActivity
 
 
@@ -67,10 +67,19 @@ class Utils(context: Context) {
         dialog!!.setCancelClickListener { sDialog -> sDialog.cancel()
             (context as Activity).finish()
         }
+        dialog!!.setCanceledOnTouchOutside(false)
         dialog!!.show()
 
     }
 
+
+    fun actionFavouriteSuccessDialogShow(message: String) {
+        dialog = SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+        dialog!!.progressHelper.barColor = Color.parseColor("#A5DC86")
+        dialog!!.titleText = message
+        dialog!!.setCancelable(true)
+        dialog!!.show()
+    }
 
 
     fun splashWaitSomeMunite(){
@@ -78,7 +87,7 @@ class Utils(context: Context) {
         Handler().postDelayed({
             context.startActivity(Intent(context, BaseActivity::class.java))
             (context as Activity).finish()
-        }, (secondsDelayed * 1000).toLong())
+        }, (secondsDelayed * 500).toLong())
     }
 
 

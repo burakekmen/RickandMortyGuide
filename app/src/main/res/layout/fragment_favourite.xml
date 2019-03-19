@@ -3,13 +3,12 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".ui.fragment.CharacterListFragment">
-
+             tools:context=".ui.fragment.FavouriteFragment">
 
     <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
                                                android:layout_height="match_parent"
-                                               android:id="@+id/fragment_character_rcList"
+                                               android:id="@+id/fragment_favourite_rcList"
+                                               android:orientation="vertical"
     />
-
 
 </FrameLayout>

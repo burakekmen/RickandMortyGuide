@@ -2,27 +2,61 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.BaseActivity"
-        android:id="@+id/activity_base_layout"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@color/baseBackground">
 
 
-    <fragment
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/activity_base_topLayout" android:weightSum="4"
+                  android:orientation="horizontal">
+
+        <androidx.appcompat.widget.SearchView android:layout_width="0dp"
+                                              android:layout_height="match_parent"
+                                              android:id="@+id/activity_base_searchView"
+                                              android:layout_marginTop="5dp"
+                                              android:layout_marginLeft="7dp"
+                                              android:layout_marginRight="4dp"
+                                              android:layout_marginBottom="10dp"
+                                              android:layout_weight="3"
+        />
+
+        <Spinner android:layout_width="0dp" android:layout_height="match_parent"
+                 android:id="@+id/activity_base_spinnerSort"
+                 android:layout_marginTop="5dp"
+                 android:layout_marginLeft="3dp"
+                 android:layout_marginRight="7dp"
+                 android:layout_marginBottom="10dp"
+                 android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/activity_base_fragment"
-            android:name="com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment"
-    />
+            android:id="@+id/activity_base_layout">
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/activity_base_fragment"
+                android:layout_above="@id/activity_base_bottom_navigation_bar"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+        />
 
 
-    <com.ashokvarma.bottomnavigation.BottomNavigationBar
-            android:layout_gravity="bottom"
-            android:id="@+id/activity_base_bottom_navigation_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <com.ashokvarma.bottomnavigation.BottomNavigationBar
+                android:layout_gravity="bottom"
+                android:id="@+id/activity_base_bottom_navigation_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
 
 </LinearLayout>

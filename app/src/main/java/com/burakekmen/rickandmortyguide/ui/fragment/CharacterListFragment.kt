@@ -1,12 +1,13 @@
 package com.burakekmen.rickandmortyguide.ui.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListCharacterAdapter
@@ -25,6 +26,8 @@ class CharacterListFragment : Fragment() {
     private var utils: Utils? = null
     private var flayout: View? = null
     private var pageCount = 1
+    private var searchQuery = ""
+    private var status = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,43 +54,148 @@ class CharacterListFragment : Fragment() {
     fun acilisHazirlik() {
         utils = Utils(context!!)
         apiInterface = ApiClient.client?.create(ApiInterface::class.java)
+
+        val bundle = this.arguments
+        if (bundle != null) run {
+            searchQuery = bundle.getString("searchQuery")!!
+            status = bundle.getString("sortStatus")!!
+        }
     }
 
 
     fun getCharacters() {
         utils!!.waitDialogShow()
 
-        apiInterface?.getCharacterPage(pageCount)?.enqueue(object : Callback<CharacterResponse> {
 
-            override fun onResponse(call: Call<CharacterResponse>?, response: Response<CharacterResponse>?) {
+        if (searchQuery == "") {
+            if (status == "") {
+                apiInterface?.getCharacterPage(pageCount)?.enqueue(object : Callback<CharacterResponse> {
 
-                if (response!!.isSuccessful) {
+                    override fun onResponse(call: Call<CharacterResponse>?, response: Response<CharacterResponse>?) {
 
-                    var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
+                        if (response!!.isSuccessful) {
 
-                    var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-                    listeyeGonder(characterListAdapter)
+                            var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
 
-                    utils?.waitDialogHide()
-                } else {
-                    utils?.waitDialogHide()
-                }
+                            var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                            listeyeGonder(characterListAdapter)
+
+                            utils?.waitDialogHide()
+                        } else {
+                            utils?.waitDialogHide()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
+
+                        Log.e("RICK HATA", t!!.message)
+                        utils?.waitDialogHide()
+                    }
+
+                })
+            } else {
+                apiInterface?.getCharacterSearchWithStatus(pageCount, status)
+                    ?.enqueue(object : Callback<CharacterResponse> {
+
+                        override fun onResponse(
+                            call: Call<CharacterResponse>?,
+                            response: Response<CharacterResponse>?
+                        ) {
+
+                            if (response!!.isSuccessful) {
+
+                                var characterResponse =
+                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
+
+                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                listeyeGonder(characterListAdapter)
+
+                                utils?.waitDialogHide()
+                            } else {
+                                utils?.waitDialogHide()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
+
+                            Log.e("RICK HATA", t!!.message)
+                            utils?.waitDialogHide()
+                        }
+
+                    })
             }
+        } else {
+            if (status == "") {
 
-            override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
 
-                Log.e("RICK HATA", t!!.message)
-                utils?.waitDialogHide()
+                apiInterface?.getCharacterSearch(pageCount, searchQuery)?.enqueue(object : Callback<CharacterResponse> {
+
+                    override fun onResponse(call: Call<CharacterResponse>?, response: Response<CharacterResponse>?) {
+
+                        if (response!!.isSuccessful) {
+
+                            var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
+
+                            var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                            listeyeGonder(characterListAdapter)
+
+                            utils?.waitDialogHide()
+                        } else {
+                            utils?.waitDialogHide()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
+
+                        Log.e("RICK HATA", t!!.message)
+                        utils?.waitDialogHide()
+                    }
+
+                })
+            } else {
+                apiInterface?.getCharacterSearchWithNameAndStatus(pageCount, searchQuery, status)
+                    ?.enqueue(object : Callback<CharacterResponse> {
+
+                        override fun onResponse(
+                            call: Call<CharacterResponse>?,
+                            response: Response<CharacterResponse>?
+                        ) {
+
+                            if (response!!.isSuccessful) {
+
+                                var characterResponse =
+                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
+
+                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                listeyeGonder(characterListAdapter)
+
+                                utils?.waitDialogHide()
+                            } else {
+                                utils?.waitDialogHide()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
+
+                            Log.e("RICK HATA", t!!.message)
+                            utils?.waitDialogHide()
+                        }
+
+                    })
             }
-
-        })
+        }
     }
 
 
+    @SuppressLint("WrongConstant")
     fun listeyeGonder(adapter: RcListCharacterAdapter) {
         fragment_character_rcList.adapter = adapter
         var fragmentActivity = activity!!
-        var myLayoutManager = LinearLayoutManager(fragmentActivity, LinearLayoutManager.VERTICAL, false)
+        var myLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            fragmentActivity,
+            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            false
+        )
         fragment_character_rcList.layoutManager = myLayoutManager
     }
 

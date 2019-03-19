@@ -1,5 +1,6 @@
 package com.burakekmen.rickandmortyguide.network
 
+import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.CharacterResponse
 import retrofit2.Call
 import retrofit2.http.GET
@@ -9,11 +10,17 @@ import retrofit2.http.Query
 interface ApiInterface {
 
 
+    @GET("character/{id}")
+    fun getSingleCharacter(@Path("id") id: Int?): Call<CharacterModel>
+
     @GET("character/")
     fun getCharacterPage(@Query("page") page: Int?): Call<CharacterResponse>
 
+    @GET("character/{characterId}")
+    fun getFavouriteCharacter(@Path("characterId") characterId: String?): Call<CharacterModel>
+
     @GET("character/{characterIds}")
-    fun getFavouriteCharacters(@Path("characterIds") characterIds: String?): Call<CharacterResponse>
+    fun getFavouriteCharacters(@Path("characterIds") characterIds: String?): Call<Array<CharacterModel>>
 
     @GET("character/")
     fun getCharacterSearch(@Query("page") page: Int?, @Query("name") name: String?): Call<CharacterResponse>

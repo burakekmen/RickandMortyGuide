@@ -3,8 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="baseBackground">#f0f4c3</color>
+    <color name="baseBackground">#202329</color>
     <color name="baseSearchViewBackgroundColor">#d2e054</color>
+    <color name="character_item_backGroundColor">#333333</color>
+    <color name="character_item_nameColor">#D9E6ED</color>
+    <color name="character_item_textFieldColor">#F26D2E</color>
+    <color name="colorSecondaryDark">#bb002f</color>
+    <color name="colorTextPrimary">#ffffff</color>
+    <color name="translucent_grey">#99484848</color>
 
     <color name="tab1Color">#420259</color>
     <color name="tab2Color">#90542F</color>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root_character"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.activity.CharacterActivity">
+
+
+    <ImageView
+            android:id="@+id/activity_character_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/char_image"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/translucent_rectangle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/translucent_grey"
+            app:layout_constraintBottom_toBottomOf="@+id/activity_character_image"
+            app:layout_constraintEnd_toEndOf="@+id/activity_character_image"
+            app:layout_constraintStart_toStartOf="@+id/activity_character_image">
+
+        <TextView
+                android:id="@+id/activity_character_txtName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:textColor="@color/character_item_nameColor"
+                android:textSize="44sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/translucent_rectangle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/translucent_rectangle"
+                tools:text="Pickle Rick"
+                android:fontFamily="@font/misfits_rick_and_morty"
+                android:layout_marginLeft="5dp"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="vertical" android:id="@+id/activity_character_detailLayout"
+                  app:layout_constraintTop_toBottomOf="@id/translucent_rectangle"
+                  android:layout_marginTop="10dp" android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+    >
+
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
+
+            <com.airbnb.lottie.LottieAnimationView android:layout_width="wrap_content"
+                                                   android:layout_height="wrap_content"/>
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fav"
+                    android:id="@+id/activity_character_favButton"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="horizontal" android:layout_weight="2" android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Status:"
+                      android:layout_weight="1" android:textAlignment="textStart"
+                      android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
+                      android:textColor="@color/character_item_nameColor"/>
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                      android:id="@+id/activity_character_status" android:text="Status" android:layout_weight="1"
+                      android:textAlignment="textEnd" android:fontFamily="@font/misfits_rick_and_morty"
+                      android:textSize="20dp"
+                      android:textColor="@color/character_item_textFieldColor"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="horizontal" android:layout_weight="2" android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Species:"
+                      android:layout_weight="1" android:textAlignment="textStart"
+                      android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
+                      android:textColor="@color/character_item_nameColor"/>
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                      android:id="@+id/activity_character_species" android:text="Species" android:layout_weight="1"
+                      android:textAlignment="textEnd" android:fontFamily="@font/misfits_rick_and_morty"
+                      android:textSize="20dp"
+                      android:textColor="@color/character_item_textFieldColor"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="horizontal" android:layout_weight="2" android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Gender:"
+                      android:layout_weight="1" android:textAlignment="textStart"
+                      android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
+                      android:textColor="@color/character_item_nameColor"/>
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                      android:id="@+id/activity_character_gender" android:text="Gender" android:layout_weight="1"
+                      android:textAlignment="textEnd" android:fontFamily="@font/misfits_rick_and_morty"
+                      android:textSize="20dp"
+                      android:textColor="@color/character_item_textFieldColor"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="horizontal" android:layout_weight="2" android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Origin:"
+                      android:layout_weight="1" android:textAlignment="textStart"
+                      android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
+                      android:textColor="@color/character_item_nameColor"/>
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                      android:id="@+id/activity_character_origin" android:text="Origin" android:layout_weight="1"
+                      android:textAlignment="textEnd" android:fontFamily="@font/misfits_rick_and_morty"
+                      android:textSize="20dp"
+                      android:textColor="@color/character_item_textFieldColor"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="horizontal" android:layout_weight="2" android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Last Location:"
+                      android:layout_weight="1" android:textAlignment="textStart"
+                      android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
+                      android:textColor="@color/character_item_nameColor"/>
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                      android:id="@+id/activity_character_lastLocation" android:text="Last Location"
+                      android:layout_weight="1"
+                      android:textAlignment="textEnd" android:fontFamily="@font/misfits_rick_and_morty"
+                      android:textSize="20dp"
+                      android:textColor="@color/character_item_textFieldColor"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
+                                               android:layout_height="wrap_content"
+                                               android:id="@+id/activity_character_episodeList"
+                                               app:layout_constraintTop_toBottomOf="@id/activity_character_detailLayout"
+                                               android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+                                               android:layout_marginTop="5dp"
+                                               android:visibility="invisible"
+    />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

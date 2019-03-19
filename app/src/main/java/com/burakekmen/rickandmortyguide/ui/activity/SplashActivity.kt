@@ -1,11 +1,10 @@
 package com.burakekmen.rickandmortyguide.ui.activity
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import kotlinx.android.synthetic.main.activity_splash.*
-
 
 
 class SplashActivity : AppCompatActivity() {

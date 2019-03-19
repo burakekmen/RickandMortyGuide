@@ -4,26 +4,33 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
 import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
+import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_base.*
 
 
 class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQueryTextListener,
     AdapterView.OnItemSelectedListener {
 
+    var fragmentManager: FragmentManager? = null
+    var fragmentTransaction: FragmentTransaction? = null
+
     private var doubleBackToExitPressedOnce = false
     private var utils: Utils? = null
     private var characterFragment: CharacterListFragment? = null
+    private var favouritesFragment: FavouriteFragment? = null
     private var page = 0 // searchview içerisinde yazıyı göstermek ve apiye doğru isteği atabilmek için kullanıldı
     private var searchQuery = ""
     private var firstOpen = true
@@ -47,24 +54,25 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         utils!!.hideStatusBar()
         spinnerTanimla()
 
-        if (!utils!!.isOnline())
-            utils!!.internetConnectionWarningShow()
+        if (!utils!!.isOnline()) {
+            //utils!!.internetConnectionWarningShow()
+            bottomBarTanimla()
+        } else {
+            activity_base_searchView?.setOnClickListener(this)
+            activity_base_searchView?.setOnQueryTextListener(this)
+            activity_base_searchView?.onActionViewExpanded()
+            activity_base_searchView?.isFocusable = false
+            activity_base_searchView?.queryHint = "Bla bla bla .."
 
-        activity_base_searchView?.setOnClickListener(this)
-        activity_base_searchView?.setOnQueryTextListener(this)
-        activity_base_searchView?.onActionViewExpanded()
-        activity_base_searchView?.isFocusable = false
-        activity_base_searchView?.queryHint = "Bla bla bla .."
+            bottomBarTanimla()
 
-        bottomBarTanimla()
+            fragmentManager = supportFragmentManager
+            fragmentTransaction = fragmentManager!!.beginTransaction()
+            characterFragment = CharacterListFragment()
+            fragmentTransaction!!.add(R.id.activity_base_fragment, characterFragment!!).commit()
 
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        characterFragment = CharacterListFragment()
-        fragmentTransaction.add(R.id.activity_base_fragment, characterFragment!!)
-        fragmentTransaction.commit()
-
-        page = 1
+            page = 1
+        }
     }
 
 
@@ -101,32 +109,30 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         activity_base_bottom_navigation_bar.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabSelected(position: Int) {
 
+                var transaction = fragmentManager!!.beginTransaction()
                 if (position == 0) {
-                    val fragmentManager = supportFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
-
                     if (characterFragment == null)
                         characterFragment = CharacterListFragment()
 
-                    if (searchQuery == "")
-                        characterFragment = CharacterListFragment()
-
-                    fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                    fragmentManager.popBackStack()
+                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
 
                     page = 1
+                    activity_base_searchView?.visibility = View.VISIBLE
+                    activity_base_spinnerSort.visibility = View.VISIBLE
+
                 } else if (position == 1) {
-                    val fragmentManager = supportFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
+                    if (favouritesFragment == null)
+                        favouritesFragment = FavouriteFragment()
 
-                    if (characterFragment == null)
-                        characterFragment = CharacterListFragment()
-
-                    fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                    fragmentManager.popBackStack()
+                    transaction.replace(R.id.activity_base_fragment, favouritesFragment!!).commit()
 
                     page = 2
+                    activity_base_searchView?.visibility = View.GONE
+                    activity_base_spinnerSort.visibility = View.GONE
+
                 }
+
+                fragmentManager!!.popBackStack()
             }
 
             override fun onTabUnselected(position: Int) {}
@@ -174,25 +180,12 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                 val fragmentManager = supportFragmentManager
                 val fragmentTransaction = fragmentManager.beginTransaction()
 
-                if (characterFragment == null)
-                    characterFragment = CharacterListFragment()
+                favouritesFragment = FavouriteFragment()
 
-                fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                fragmentTransaction.replace(R.id.activity_base_fragment, favouritesFragment!!).commit()
                 fragmentManager.popBackStack()
 
                 page = 2
-            }
-            3 -> {
-                val fragmentManager = supportFragmentManager
-                val fragmentTransaction = fragmentManager.beginTransaction()
-
-                if (characterFragment == null)
-                    characterFragment = CharacterListFragment()
-
-                fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                fragmentManager.popBackStack()
-
-                page = 3
             }
         }
     }
@@ -223,12 +216,11 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
         var sortItem = parent!!.selectedItemPosition
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
 
         if (!firstOpen) {
             when (sortItem) {
                 0 -> {
+
                     characterFragment = CharacterListFragment()
 
                     val bundle = Bundle()
@@ -239,8 +231,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                    fragmentManager.popBackStack()
+                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    fragmentManager!!.popBackStack()
 
                     page = 1
                 }
@@ -255,8 +247,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                    fragmentManager.popBackStack()
+                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    fragmentManager!!.popBackStack()
 
                     page = 1
                 }
@@ -271,8 +263,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                    fragmentManager.popBackStack()
+                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    fragmentManager!!.popBackStack()
 
                     page = 1
                 }
@@ -286,8 +278,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
-                    fragmentManager.popBackStack()
+                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    fragmentManager!!.popBackStack()
 
                     page = 1
                 }
@@ -315,6 +307,13 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
             super.onBackPressed()
             return
         }
+    }
+
+
+    override fun onResume() {
+        if (!utils!!.isOnline())
+            utils!!.internetConnectionWarningShow()
+        super.onResume()
     }
 
 
