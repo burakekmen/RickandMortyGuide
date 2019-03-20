@@ -225,6 +225,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
         var sortItem = parent!!.selectedItemPosition
+        var transaction = fragmentManager!!.beginTransaction()
 
         if (!firstOpen) {
             when (sortItem) {
@@ -240,7 +241,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1
@@ -256,7 +257,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1
@@ -272,7 +273,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1
@@ -287,7 +288,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    fragmentTransaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1

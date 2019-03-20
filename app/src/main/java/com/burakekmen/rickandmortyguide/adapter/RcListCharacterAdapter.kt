@@ -15,7 +15,7 @@ class RcListCharacterAdapter(context: Context?, characterResponse: CharacterResp
     androidx.recyclerview.widget.RecyclerView.Adapter<RcListCharacterViewHolder>() {
 
     private var context = context
-    private var response = characterResponse
+    var response = characterResponse
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RcListCharacterViewHolder {
         var inflater = LayoutInflater.from(parent.context).inflate(R.layout.character_list_item, parent, false)

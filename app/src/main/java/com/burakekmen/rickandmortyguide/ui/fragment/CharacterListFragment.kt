@@ -1,6 +1,7 @@
 package com.burakekmen.rickandmortyguide.ui.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListCharacterAdapter
+import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.CharacterResponse
+import com.burakekmen.rickandmortyguide.model.PaginationScrollListener
 import com.burakekmen.rickandmortyguide.network.ApiClient
 import com.burakekmen.rickandmortyguide.network.ApiInterface
 import kotlinx.android.synthetic.main.fragment_character_list.*
@@ -22,12 +25,19 @@ import retrofit2.Response
 
 class CharacterListFragment : Fragment() {
 
-    private var apiInterface: ApiInterface?=null
+    private var apiInterface: ApiInterface? = null
     private var utils: Utils? = null
     private var flayout: View? = null
     private var pageCount = 1
     private var searchQuery = ""
     private var status = ""
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
+    var fragmentActivity: Activity? = null
+    var myLayoutManager: LinearLayoutManager? = null
+    var characterResponse: CharacterResponse? = null
+    var characterListAdapter: RcListCharacterAdapter? = null
+    private var characterList = mutableListOf<CharacterModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +46,6 @@ class CharacterListFragment : Fragment() {
 
         if (flayout == null)
             flayout = inflater.inflate(R.layout.fragment_character_list, container, false)
-
-
 
         acilisHazirlik()
 
@@ -51,7 +59,9 @@ class CharacterListFragment : Fragment() {
     }
 
 
+    @SuppressLint("WrongConstant")
     fun acilisHazirlik() {
+        fragmentActivity = activity!!
         utils = Utils(context!!)
         apiInterface = ApiClient.client?.create(ApiInterface::class.java)
 
@@ -63,9 +73,27 @@ class CharacterListFragment : Fragment() {
     }
 
 
+    fun recyclerViewPaginationTanimla() {
+        fragment_character_rcList.addOnScrollListener(object : PaginationScrollListener(myLayoutManager) {
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+
+            override fun loadMoreItems() {
+                isLoading = true
+                pageCount++
+                getCharacters()
+            }
+        })
+    }
+
+
     fun getCharacters() {
         utils!!.waitDialogShow()
-
 
         if (searchQuery == "") {
             if (status == "") {
@@ -73,12 +101,35 @@ class CharacterListFragment : Fragment() {
 
                     override fun onResponse(call: Call<CharacterResponse>?, response: Response<CharacterResponse>?) {
 
+                        isLoading = false
+
                         if (response!!.isSuccessful) {
 
-                            var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
+                            characterList = (response.body()!!.results).toMutableList()
 
-                            var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-                            listeyeGonder(characterListAdapter)
+                            if (characterResponse != null) {
+                                if (characterResponse!!.results.size > 0)
+                                    characterResponse!!.results.addAll(characterList as ArrayList<CharacterModel>)
+                                else
+                                    characterResponse =
+                                        CharacterResponse(
+                                            response.body()!!.info,
+                                            characterList as ArrayList<CharacterModel>
+                                        )
+                            } else
+                                characterResponse =
+                                    CharacterResponse(
+                                        response.body()!!.info,
+                                        characterList as ArrayList<CharacterModel>
+                                    )
+
+                            if (characterListAdapter != null) {
+                                characterListAdapter!!.response!!.results = characterResponse!!.results
+                                fragment_character_rcList.adapter!!.notifyDataSetChanged()
+                            } else {
+                                characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                listeyeGonder(characterListAdapter!!)
+                            }
 
                             utils?.waitDialogHide()
                         } else {
@@ -104,16 +155,46 @@ class CharacterListFragment : Fragment() {
 
                             if (response!!.isSuccessful) {
 
-                                var characterResponse =
-                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
+                                characterList = (response.body()!!.results).toMutableList()
 
-                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-                                listeyeGonder(characterListAdapter)
+                                if (characterResponse != null) {
+                                    if (characterResponse!!.results.size > 0)
+                                        characterResponse!!.results.addAll(characterList as ArrayList<CharacterModel>)
+                                    else
+                                        characterResponse =
+                                            CharacterResponse(
+                                                response.body()!!.info,
+                                                characterList as ArrayList<CharacterModel>
+                                            )
+                                } else
+                                    characterResponse =
+                                        CharacterResponse(
+                                            response.body()!!.info,
+                                            characterList as ArrayList<CharacterModel>
+                                        )
 
+                                if (characterListAdapter != null) {
+                                    characterListAdapter!!.response!!.results = characterResponse!!.results
+                                    fragment_character_rcList.adapter!!.notifyDataSetChanged()
+                                } else {
+                                    characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                    listeyeGonder(characterListAdapter!!)
+                                }
                                 utils?.waitDialogHide()
                             } else {
                                 utils?.waitDialogHide()
                             }
+
+//                                var characterResponse =
+//                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
+//
+//                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+//                                listeyeGonder(characterListAdapter)
+//
+//                                utils?.waitDialogHide()
+//                            } else {
+//                                utils?.waitDialogHide()
+//                            }
                         }
 
                         override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
@@ -134,15 +215,45 @@ class CharacterListFragment : Fragment() {
 
                         if (response!!.isSuccessful) {
 
-                            var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
+                            characterList = (response.body()!!.results).toMutableList()
 
-                            var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-                            listeyeGonder(characterListAdapter)
+                            if (characterResponse != null) {
+                                if (characterResponse!!.results.size > 0)
+                                    characterResponse!!.results.addAll(characterList as ArrayList<CharacterModel>)
+                                else
+                                    characterResponse =
+                                        CharacterResponse(
+                                            response.body()!!.info,
+                                            characterList as ArrayList<CharacterModel>
+                                        )
+                            } else
+                                characterResponse =
+                                    CharacterResponse(
+                                        response.body()!!.info,
+                                        characterList as ArrayList<CharacterModel>
+                                    )
 
+                            if (characterListAdapter != null) {
+                                characterListAdapter!!.response!!.results = characterResponse!!.results
+                                fragment_character_rcList.adapter!!.notifyDataSetChanged()
+                            } else {
+                                characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                listeyeGonder(characterListAdapter!!)
+                            }
                             utils?.waitDialogHide()
                         } else {
                             utils?.waitDialogHide()
                         }
+
+//                            var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
+//
+//                            var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+//                            listeyeGonder(characterListAdapter)
+//
+//                            utils?.waitDialogHide()
+//                        } else {
+//                            utils?.waitDialogHide()
+//                        }
                     }
 
                     override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
@@ -163,16 +274,47 @@ class CharacterListFragment : Fragment() {
 
                             if (response!!.isSuccessful) {
 
-                                var characterResponse =
-                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
+                                characterList = (response.body()!!.results).toMutableList()
 
-                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-                                listeyeGonder(characterListAdapter)
+                                if (characterResponse != null) {
+                                    if (characterResponse!!.results.size > 0)
+                                        characterResponse!!.results.addAll(characterList as ArrayList<CharacterModel>)
+                                    else
+                                        characterResponse =
+                                            CharacterResponse(
+                                                response.body()!!.info,
+                                                characterList as ArrayList<CharacterModel>
+                                            )
+                                } else
+                                    characterResponse =
+                                        CharacterResponse(
+                                            response.body()!!.info,
+                                            characterList as ArrayList<CharacterModel>
+                                        )
+
+                                if (characterListAdapter != null) {
+                                    characterListAdapter!!.response!!.results = characterResponse!!.results
+                                    fragment_character_rcList.adapter!!.notifyDataSetChanged()
+                                } else {
+                                    characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                    listeyeGonder(characterListAdapter!!)
+                                }
 
                                 utils?.waitDialogHide()
                             } else {
                                 utils?.waitDialogHide()
                             }
+
+//                                var characterResponse =
+//                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
+//
+//                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+//                                listeyeGonder(characterListAdapter)
+//
+//                                utils?.waitDialogHide()
+//                            } else {
+//                                utils?.waitDialogHide()
+//                            }
                         }
 
                         override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
@@ -189,14 +331,18 @@ class CharacterListFragment : Fragment() {
 
     @SuppressLint("WrongConstant")
     fun listeyeGonder(adapter: RcListCharacterAdapter) {
+
         fragment_character_rcList.adapter = adapter
-        var fragmentActivity = activity!!
-        var myLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+
+        myLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(
             fragmentActivity,
             androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
             false
         )
         fragment_character_rcList.layoutManager = myLayoutManager
+
+        fragment_character_rcList.setHasFixedSize(true)
+        recyclerViewPaginationTanimla()
     }
 
 

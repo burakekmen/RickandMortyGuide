@@ -44,10 +44,6 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     fun acilisAyarlariniYap() {
         utils!!.hideStatusBar()
         activity_character_favButton?.setOnClickListener(this)
-
-        if (!utils!!.isOnline())
-            utils!!.internetConnectionWarningShow()
-
     }
 
 
@@ -125,6 +121,14 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     fun eventKaydet() {
         mFirebaseAnalytics!!.logEvent("sc_CharacterDetail", null)
         mFirebaseAnalytics!!.logEvent(character!!.id.toString() + " - " + character!!.name, null)
+    }
+
+
+    override fun onResume() {
+        if (!utils!!.isOnline())
+            utils!!.internetConnectionWarningShow()
+        super.onResume()
+
     }
 
 }
