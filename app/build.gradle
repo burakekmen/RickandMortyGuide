@@ -40,5 +40,4 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'androidx.cardview:cardview:1.0.0-beta01'
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.1.0'
-    implementation 'com.airbnb.android:lottie:2.8.0'
 }

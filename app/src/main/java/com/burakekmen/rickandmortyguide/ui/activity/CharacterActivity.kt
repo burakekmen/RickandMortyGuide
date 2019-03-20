@@ -18,6 +18,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     private var utils: Utils? = null
     private var character: CharacterModel? = null
     private var dbHandler: DatabaseHelper? = null
+    private var isFavourite = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +54,13 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
         if (bundle != null) {
             character = bundle.getParcelable("selectedCharacter")
+
+            isFavourite = dbHandler!!.isHaveFavouriteCharacter(character!!.id.toString())
+
+            if (isFavourite)
+                activity_character_favButton?.setImageResource(R.drawable.ic_like)
+            else
+                activity_character_favButton?.setImageResource(R.drawable.ic_like_inactive)
         }
     }
 
@@ -84,6 +92,11 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     removeFavourite(character!!.id)
                 }
+
+                if (dbHandler!!.isHaveFavouriteCharacter(character!!.id.toString()))
+                    activity_character_favButton?.setImageResource(R.drawable.ic_like)
+                else
+                    activity_character_favButton?.setImageResource(R.drawable.ic_like_inactive)
             }
         }
     }
