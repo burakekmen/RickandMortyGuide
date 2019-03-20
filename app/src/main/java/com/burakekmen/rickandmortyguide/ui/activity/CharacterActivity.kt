@@ -10,11 +10,13 @@ import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListCharacterEpisodesAdapter
 import com.burakekmen.rickandmortyguide.database.DatabaseHelper
 import com.burakekmen.rickandmortyguide.model.CharacterModel
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_character.*
 
 class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private var utils: Utils? = null
     private var character: CharacterModel? = null
     private var dbHandler: DatabaseHelper? = null
@@ -36,6 +38,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     init {
         utils = Utils(this)
         dbHandler = DatabaseHelper(this)
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
     }
 
     fun acilisAyarlariniYap() {
@@ -54,6 +57,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
         if (bundle != null) {
             character = bundle.getParcelable("selectedCharacter")
+            eventKaydet()
 
             isFavourite = dbHandler!!.isHaveFavouriteCharacter(character!!.id.toString())
 
@@ -117,6 +121,11 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
             utils!!.actionFavouriteSuccessDialogShow("This character is NOT your favourite character now")
     }
 
+
+    fun eventKaydet() {
+        mFirebaseAnalytics!!.logEvent("sc_CharacterDetail", null)
+        mFirebaseAnalytics!!.logEvent(character!!.id.toString() + " - " + character!!.name, null)
+    }
 
 }
 

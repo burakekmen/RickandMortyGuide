@@ -14,10 +14,10 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            tools:replace="android:icon">
-        <activity android:name=".ui.activity.CharacterActivity">
+            tools:replace="android:icon" android:screenOrientation="portrait">
+        <activity android:name=".ui.activity.CharacterActivity" android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activity.SplashActivity">
+        <activity android:name=".ui.activity.SplashActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

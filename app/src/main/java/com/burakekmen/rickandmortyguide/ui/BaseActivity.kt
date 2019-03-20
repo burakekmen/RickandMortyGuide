@@ -18,12 +18,14 @@ import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_base.*
 
 
 class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQueryTextListener,
     AdapterView.OnItemSelectedListener {
 
+    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     var fragmentManager: FragmentManager? = null
     var fragmentTransaction: FragmentTransaction? = null
 
@@ -46,6 +48,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
     init {
         utils = Utils(this)
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
     }
 
 
@@ -72,6 +75,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
             fragmentTransaction!!.add(R.id.activity_base_fragment, characterFragment!!).commit()
 
             page = 1
+
+            mFirebaseAnalytics!!.logEvent("sc_Characters", null)
         }
     }
 
@@ -120,6 +125,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     activity_base_searchView?.visibility = View.VISIBLE
                     activity_base_spinnerSort.visibility = View.VISIBLE
 
+                    mFirebaseAnalytics!!.logEvent("sc_Characters", null)
+
                 } else if (position == 1) {
                     if (favouritesFragment == null)
                         favouritesFragment = FavouriteFragment()
@@ -129,6 +136,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     page = 2
                     activity_base_searchView?.visibility = View.GONE
                     activity_base_spinnerSort.visibility = View.GONE
+
+                    mFirebaseAnalytics!!.logEvent("sc_Favourites", null)
 
                 }
 
