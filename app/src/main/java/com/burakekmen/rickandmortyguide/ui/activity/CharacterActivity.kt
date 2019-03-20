@@ -1,6 +1,7 @@
 package com.burakekmen.rickandmortyguide.ui.activity
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -73,6 +74,26 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
         activity_character_lastLocation?.text = character!!.location.name
         activity_character_origin?.text = character!!.origin.name
         activity_character_species?.text = character!!.species
+
+        if (character!!.status.toLowerCase() == "alive") {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                activity_character_status.setTextColor(getColor(R.color.alive_color))
+            } else {
+                activity_character_status.setTextColor(resources!!.getColor(R.color.alive_color))
+            }
+        } else if (character!!.status.toLowerCase() == "dead") {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                activity_character_status.setTextColor(getColor(R.color.dead_color))
+            } else {
+                activity_character_status.setTextColor(resources!!.getColor(R.color.dead_color))
+            }
+        } else if (character!!.status.toLowerCase() == "unknown") {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                activity_character_status.setTextColor(getColor(R.color.unknown_color))
+            } else {
+                activity_character_status.setTextColor(resources!!.getColor(R.color.unknown_color))
+            }
+        }
     }
 
 

@@ -81,6 +81,14 @@ class Utils(context: Context) {
         dialog!!.show()
     }
 
+    fun actionErrorDialogShow(message: String) {
+        dialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+        dialog!!.progressHelper.barColor = Color.parseColor("#666600")
+        dialog!!.titleText = message
+        dialog!!.setCancelable(true)
+        dialog!!.show()
+    }
+
 
     fun splashWaitSomeMunite(){
         val secondsDelayed = 1

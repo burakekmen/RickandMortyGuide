@@ -16,4 +16,8 @@
     <color name="tab2Color">#90542F</color>
     <color name="tab3Color">#70b347</color>
 
+    <color name="dead_color">#ff5349</color>
+    <color name="alive_color">#187b09</color>
+    <color name="unknown_color">#F26D2E</color>
+
 </resources>

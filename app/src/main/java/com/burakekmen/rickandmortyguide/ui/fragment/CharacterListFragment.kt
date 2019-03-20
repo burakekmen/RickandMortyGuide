@@ -85,7 +85,6 @@ class CharacterListFragment : Fragment() {
 
             override fun loadMoreItems() {
                 isLoading = true
-                pageCount++
                 getCharacters()
             }
         })
@@ -153,6 +152,8 @@ class CharacterListFragment : Fragment() {
                             response: Response<CharacterResponse>?
                         ) {
 
+                            isLoading = false
+
                             if (response!!.isSuccessful) {
 
                                 characterList = (response.body()!!.results).toMutableList()
@@ -213,6 +214,8 @@ class CharacterListFragment : Fragment() {
 
                     override fun onResponse(call: Call<CharacterResponse>?, response: Response<CharacterResponse>?) {
 
+                        isLoading = false
+
                         if (response!!.isSuccessful) {
 
                             characterList = (response.body()!!.results).toMutableList()
@@ -272,6 +275,8 @@ class CharacterListFragment : Fragment() {
                             response: Response<CharacterResponse>?
                         ) {
 
+                            isLoading = false
+
                             if (response!!.isSuccessful) {
 
                                 characterList = (response.body()!!.results).toMutableList()
@@ -326,6 +331,8 @@ class CharacterListFragment : Fragment() {
                     })
             }
         }
+
+        pageCount++
     }
 
 

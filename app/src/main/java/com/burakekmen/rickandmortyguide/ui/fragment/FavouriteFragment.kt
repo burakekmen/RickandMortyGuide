@@ -20,7 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class FavouriteFragment : Fragment() {
+class FavouriteFragment : Fragment(), View.OnClickListener {
 
     private var apiInterface: ApiInterface? = null
     private var utils: Utils? = null
@@ -40,8 +40,6 @@ class FavouriteFragment : Fragment() {
 
         acilisHazirlikYap()
 
-
-
         return flayout
     }
 
@@ -50,6 +48,8 @@ class FavouriteFragment : Fragment() {
         utils = Utils(context!!)
         dbHandler = DatabaseHelper(context!!)
         apiInterface = ApiClient.client?.create(ApiInterface::class.java)
+
+        fragment_favourite_sadFace?.setOnClickListener(this)
     }
 
 
@@ -72,9 +72,21 @@ class FavouriteFragment : Fragment() {
 
     }
 
+
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.fragment_favourite_sadFace -> {
+                utils!!.actionErrorDialogShow("I am so sad because You have not favourite character!")
+            }
+        }
+    }
+
+
     private fun favorileriGetir() {
         favouriteList = dbHandler!!.getAllFavourites()
-        setFavouriteListToOneLineString()
+
+        if (favouriteList.size >= 1) {
+            setFavouriteListToOneLineString()
 
 //        var dizi = Array(favouriteList.size) { i: Int -> i }
 //
@@ -82,10 +94,16 @@ class FavouriteFragment : Fragment() {
 //            dizi[i] = favouriteList[i]
 //        }
 
-        if (favouriteList.size > 1)
-            getFavourite(true)
-        else
-            getFavourite(false)
+            if (favouriteList.size > 1)
+                getFavourite(true)
+            else
+                getFavourite(false)
+        } else {
+            utils!!.actionErrorDialogShow("You have not favourite character yet!")
+            fragment_favourite_rcList.visibility = View.GONE
+            fragment_favourite_sadFace.visibility = View.VISIBLE
+        }
+
     }
 
 
