@@ -58,7 +58,6 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         spinnerTanimla()
 
         if (!utils!!.isOnline()) {
-            //utils!!.internetConnectionWarningShow()
             bottomBarTanimla()
         } else {
             activity_base_searchView?.setOnClickListener(this)
@@ -222,10 +221,11 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
         var sortItem = parent!!.selectedItemPosition
-        var transaction = fragmentManager!!.beginTransaction()
+        var transaction = fragmentManager?.beginTransaction()
 
         if (!firstOpen) {
             when (sortItem) {
@@ -241,7 +241,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1
@@ -257,7 +257,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1
@@ -273,7 +273,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1
@@ -288,7 +288,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     bundle.putString("sortStatus", sortStatus)
                     characterFragment!!.arguments = bundle
 
-                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                    transaction!!.replace(R.id.activity_base_fragment, characterFragment!!).commit()
                     fragmentManager!!.popBackStack()
 
                     page = 1

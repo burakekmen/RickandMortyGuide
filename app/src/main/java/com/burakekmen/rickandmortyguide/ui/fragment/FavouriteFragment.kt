@@ -88,16 +88,14 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
         if (favouriteList.size >= 1) {
             setFavouriteListToOneLineString()
 
-//        var dizi = Array(favouriteList.size) { i: Int -> i }
-//
-//        for (i in 0 until favouriteList.size) {
-//            dizi[i] = favouriteList[i]
-//        }
-
             if (favouriteList.size > 1)
                 getFavourite(true)
             else
                 getFavourite(false)
+
+            fragment_favourite_sadFace.visibility = View.GONE
+            fragment_favourite_rcList.visibility = View.VISIBLE
+
         } else {
             utils!!.actionErrorDialogShow("You have not favourite character yet!")
             fragment_favourite_rcList.visibility = View.GONE

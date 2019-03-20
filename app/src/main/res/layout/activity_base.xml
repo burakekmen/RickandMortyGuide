@@ -48,7 +48,6 @@
                 android:layout_marginRight="2dp"
         />
 
-
         <com.ashokvarma.bottomnavigation.BottomNavigationBar
                 android:layout_gravity="bottom"
                 android:id="@+id/activity_base_bottom_navigation_bar"

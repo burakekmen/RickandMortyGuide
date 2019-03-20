@@ -13,8 +13,8 @@
     <color name="translucent_grey">#99484848</color>
 
     <color name="tab1Color">#420259</color>
-    <color name="tab2Color">#90542F</color>
-    <color name="tab3Color">#70b347</color>
+    <color name="tab2Color">#70b347</color>
+    <color name="tab3Color">#90542F</color>
 
     <color name="dead_color">#ff5349</color>
     <color name="alive_color">#187b09</color>

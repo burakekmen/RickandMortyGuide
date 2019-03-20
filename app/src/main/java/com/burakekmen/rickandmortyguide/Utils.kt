@@ -56,8 +56,9 @@ class Utils(context: Context) {
         dialog!!.cancelText = "No, I will not!"
         dialog!!.confirmText = "Ok, I will check it!"
         dialog!!.setConfirmClickListener { sDialog ->
-            if (isOnline())
+            if (isOnline()) {
                 sDialog.cancel()
+            }
             else {
                 dialog!!.hide()
                 internetConnectionWarningShow()

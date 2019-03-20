@@ -59,7 +59,6 @@ class CharacterListFragment : Fragment() {
     }
 
 
-    @SuppressLint("WrongConstant")
     fun acilisHazirlik() {
         fragmentActivity = activity!!
         utils = Utils(context!!)
@@ -71,6 +70,7 @@ class CharacterListFragment : Fragment() {
             status = bundle.getString("sortStatus")!!
         }
     }
+
 
 
     fun recyclerViewPaginationTanimla() {
@@ -185,17 +185,6 @@ class CharacterListFragment : Fragment() {
                             } else {
                                 utils?.waitDialogHide()
                             }
-
-//                                var characterResponse =
-//                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
-//
-//                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-//                                listeyeGonder(characterListAdapter)
-//
-//                                utils?.waitDialogHide()
-//                            } else {
-//                                utils?.waitDialogHide()
-//                            }
                         }
 
                         override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
@@ -247,16 +236,6 @@ class CharacterListFragment : Fragment() {
                         } else {
                             utils?.waitDialogHide()
                         }
-
-//                            var characterResponse = CharacterResponse(response.body()!!.info, response.body()!!.results)
-//
-//                            var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-//                            listeyeGonder(characterListAdapter)
-//
-//                            utils?.waitDialogHide()
-//                        } else {
-//                            utils?.waitDialogHide()
-//                        }
                     }
 
                     override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
@@ -304,22 +283,10 @@ class CharacterListFragment : Fragment() {
                                     characterListAdapter = RcListCharacterAdapter(context, characterResponse)
                                     listeyeGonder(characterListAdapter!!)
                                 }
-
                                 utils?.waitDialogHide()
                             } else {
                                 utils?.waitDialogHide()
                             }
-
-//                                var characterResponse =
-//                                    CharacterResponse(response.body()!!.info, response.body()!!.results)
-//
-//                                var characterListAdapter = RcListCharacterAdapter(context, characterResponse)
-//                                listeyeGonder(characterListAdapter)
-//
-//                                utils?.waitDialogHide()
-//                            } else {
-//                                utils?.waitDialogHide()
-//                            }
                         }
 
                         override fun onFailure(call: Call<CharacterResponse>?, t: Throwable?) {
@@ -333,6 +300,8 @@ class CharacterListFragment : Fragment() {
         }
 
         pageCount++
+
+
     }
 
 
