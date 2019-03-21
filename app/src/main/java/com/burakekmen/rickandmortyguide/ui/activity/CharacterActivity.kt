@@ -3,6 +3,7 @@ package com.burakekmen.rickandmortyguide.ui.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,17 +12,25 @@ import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListCharacterEpisodesAdapter
 import com.burakekmen.rickandmortyguide.database.DatabaseHelper
 import com.burakekmen.rickandmortyguide.model.CharacterModel
+import com.burakekmen.rickandmortyguide.model.EpisodeModel
+import com.burakekmen.rickandmortyguide.network.ApiClient
+import com.burakekmen.rickandmortyguide.network.ApiInterface
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_character.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var apiInterface: ApiInterface? = null
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private var utils: Utils? = null
     private var character: CharacterModel? = null
     private var dbHandler: DatabaseHelper? = null
     private var isFavourite = false
+    private var episodeIds = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +41,12 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
         if (character != null) {
             verileriDoldur()
-            listeyeGonder()
         }
     }
 
     init {
         utils = Utils(this)
+        apiInterface = ApiClient.client?.create(ApiInterface::class.java)
         dbHandler = DatabaseHelper(this)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
     }
@@ -94,14 +103,110 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
                 activity_character_status.setTextColor(resources!!.getColor(R.color.unknown_color))
             }
         }
+
+
+        if (utils!!.isOnline()) {
+            if (character!!.episode!!.size > 1) {
+                getEpisodeIdsFromList()
+                getCharacterEpisodes(true)
+                activity_character_episodeList.visibility = View.VISIBLE
+            } else {
+                if (character!!.episode!!.size == 1) {
+                    getEpisodeIdsFromList()
+                    getCharacterEpisodes(false)
+                    activity_character_episodeList.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
 
+    private fun getEpisodeIdsFromList() {
+        for (i in 0 until character!!.episode!!.size) {
+            var episode = character!!.episode!![i]
+            var index = episode.lastIndexOf('/')
+
+            episodeIds.add(episode.substring(index + 1))
+        }
+    }
+
+
+    private fun getCharacterEpisodes(isMulti: Boolean) {
+        utils!!.waitDialogShow()
+
+        if (isMulti) {
+            apiInterface?.getCharacterMultiEpisode(episodeIds.joinToString())
+                ?.enqueue(object : Callback<Array<EpisodeModel>> {
+
+                    override fun onResponse(
+                        call: Call<Array<EpisodeModel>>?,
+                        response: Response<Array<EpisodeModel>>?
+                    ) {
+
+                        if (response!!.isSuccessful) {
+
+                            val response = response.body()
+
+
+                            val characterEpisodeListAdapter =
+                                RcListCharacterEpisodesAdapter(response!!.toMutableList())
+                            listeyeGonder(characterEpisodeListAdapter)
+
+                            utils?.waitDialogHide()
+                        } else {
+                            utils?.waitDialogHide()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Array<EpisodeModel>>?, t: Throwable?) {
+
+                        Log.e("RICK HATA", t!!.message)
+                        utils?.waitDialogHide()
+                    }
+
+                })
+        } else {
+            apiInterface?.getCharacterEpisode(episodeIds.joinToString())
+                ?.enqueue(object : Callback<EpisodeModel> {
+
+                    override fun onResponse(
+                        call: Call<EpisodeModel>?,
+                        response: Response<EpisodeModel>?
+                    ) {
+
+                        if (response!!.isSuccessful) {
+
+                            val characterEpisode = mutableListOf<EpisodeModel>()
+                            characterEpisode.add(response.body()!!)
+
+                            val characterEpisodesAdapter =
+                                RcListCharacterEpisodesAdapter(characterEpisode)
+                            listeyeGonder(characterEpisodesAdapter)
+
+                            utils?.waitDialogHide()
+                        } else {
+                            utils?.waitDialogHide()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<EpisodeModel>?, t: Throwable?) {
+
+                        Log.e("RICK HATA", t!!.message)
+                        utils?.waitDialogHide()
+                    }
+
+                })
+        }
+    }
+
+
+
     @SuppressLint("WrongConstant")
-    fun listeyeGonder() {
-        activity_character_episodeList.adapter = RcListCharacterEpisodesAdapter(character!!.episode!!.toMutableList())
+    fun listeyeGonder(adapter: RcListCharacterEpisodesAdapter) {
+        activity_character_episodeList.adapter = adapter
         var myLayoutManager = LinearLayoutManager(this@CharacterActivity, LinearLayoutManager.VERTICAL, false)
         activity_character_episodeList.layoutManager = myLayoutManager
+        activity_character_episodeList.setHasFixedSize(true)
     }
 
 

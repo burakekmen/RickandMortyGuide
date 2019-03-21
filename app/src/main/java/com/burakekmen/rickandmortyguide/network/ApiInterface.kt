@@ -2,6 +2,7 @@ package com.burakekmen.rickandmortyguide.network
 
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.CharacterResponse
+import com.burakekmen.rickandmortyguide.model.EpisodeModel
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -30,5 +31,12 @@ interface ApiInterface {
 
     @GET("character/")
     fun getCharacterSearchWithNameAndStatus(@Query("page") page: Int?, @Query("name") name: String?, @Query("status") status: String?): Call<CharacterResponse>
+
+    @GET("episode/{episodeId}")
+    fun getCharacterEpisode(@Path("episodeId") episodeId: String?): Call<EpisodeModel>
+
+    @GET("episode/{episodesId}")
+    fun getCharacterMultiEpisode(@Path("episodesId") episodesId: String?): Call<Array<EpisodeModel>>
+
 
 }
