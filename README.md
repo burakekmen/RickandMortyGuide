@@ -17,3 +17,7 @@ Used Libraries
 
 
 ![Alt text](https://github.com/burakekmen/RickandMortyGuide/blob/master/ScreenShot_2.png "Characters Page with Sort")
+
+
+
+![Alt text](https://github.com/burakekmen/RickandMortyGuide/blob/master/ScreenShot_2.png "Character Detail Page")
