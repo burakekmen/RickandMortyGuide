@@ -17,8 +17,11 @@ import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_base.*
 
 
@@ -37,6 +40,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     private var searchQuery = ""
     private var firstOpen = true
     private var sortStatus = ""
+    private var userToken = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,9 +80,27 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
             page = 1
 
             mFirebaseAnalytics!!.logEvent("sc_Characters", null)
+            getToken()
         }
     }
 
+
+    private fun getToken() {
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                userToken = task.result!!.token
+            })
+
+
+        if (getString(R.string.isRelease).toBoolean())
+            FirebaseMessaging.getInstance().isAutoInitEnabled = true
+
+    }
 
     fun bottomBarTanimla() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
