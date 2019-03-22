@@ -44,7 +44,7 @@ class Utils(context: Context) {
     fun waitDialogHide() {
         if (dialog != null) {
             if (dialog!!.isShowing)
-                dialog!!.dismiss()
+                dialog!!.hide()
         }
     }
 
@@ -60,7 +60,7 @@ class Utils(context: Context) {
                 sDialog.cancel()
             }
             else {
-                dialog!!.dismiss()
+                dialog!!.hide()
                 internetConnectionWarningShow()
             }
         }

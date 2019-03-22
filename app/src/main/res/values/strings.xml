@@ -20,10 +20,6 @@
     <string name="dead">dead</string>
     <string name="unknown">unknown</string>
 
-
-    <string name="adId_Test">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="adId_Release">ca-app-pub-1757058856747719/4309186342</string>
-
     <string name="isRelease">false</string>
 
     <!-- TODO: Remove or change this placeholder text -->
