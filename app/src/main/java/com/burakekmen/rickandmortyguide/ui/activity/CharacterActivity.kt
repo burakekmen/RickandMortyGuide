@@ -1,6 +1,8 @@
 package com.burakekmen.rickandmortyguide.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +13,15 @@ import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListCharacterEpisodesAdapter
 import com.burakekmen.rickandmortyguide.database.DatabaseHelper
+import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.EpisodeModel
 import com.burakekmen.rickandmortyguide.network.ApiClient
 import com.burakekmen.rickandmortyguide.network.ApiInterface
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_character.*
@@ -24,6 +31,8 @@ import retrofit2.Response
 
 class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var sharedPref: SharedPreferences? = null
+    private lateinit var mInterstitialAd: InterstitialAd
     private var apiInterface: ApiInterface? = null
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private var utils: Utils? = null
@@ -54,6 +63,22 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     fun acilisAyarlariniYap() {
         utils!!.hideStatusBar()
         activity_character_favButton?.setOnClickListener(this)
+
+        sharedPref =
+            getSharedPreferences(SharedPreferenceNameEnum.RaMSharedPereference.toString(), Context.MODE_PRIVATE)
+        val editor = sharedPref!!.edit()
+        var viewCount = sharedPref!!.getInt("characterViewCount", 0) + 1
+        editor!!.putInt("characterViewCount", viewCount).apply()
+
+
+        MobileAds.initialize(this, "ca-app-pub-1757058856747719~8412082886")
+        mInterstitialAd = InterstitialAd(this)
+
+        if (getString(R.string.isRelease).toBoolean())
+            mInterstitialAd.adUnitId = getString(R.string.adId_Release)
+        else
+            mInterstitialAd.adUnitId = getString(R.string.adId_Test)
+        adListenerTanimla()
     }
 
 
@@ -200,13 +225,14 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-
     @SuppressLint("WrongConstant")
     fun listeyeGonder(adapter: RcListCharacterEpisodesAdapter) {
         activity_character_episodeList.adapter = adapter
         var myLayoutManager = LinearLayoutManager(this@CharacterActivity, LinearLayoutManager.VERTICAL, false)
         activity_character_episodeList.layoutManager = myLayoutManager
         activity_character_episodeList.setHasFixedSize(true)
+
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
     }
 
 
@@ -250,12 +276,47 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
+    fun adListenerTanimla() {
+        mInterstitialAd.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                val editor = sharedPref!!.edit()
+                var viewCount = sharedPref!!.getInt("characterViewCount", 0)
+
+                if (viewCount >= 3) {
+                    if (mInterstitialAd.isLoaded) {
+                        editor.putInt("characterViewCount", 0).apply()
+                        mInterstitialAd.show()
+                    } else {
+                        mInterstitialAd.loadAd(AdRequest.Builder().build())
+                    }
+                }
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            override fun onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+            }
+        }
+    }
+
+
     override fun onResume() {
         if (!utils!!.isOnline())
             utils!!.internetConnectionWarningShow()
         super.onResume()
 
     }
+
 
 }
 

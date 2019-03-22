@@ -9,11 +9,12 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.burakekmen.rickandmortyguide"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -35,6 +36,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crash:16.2.1'
     implementation 'com.google.firebase:firebase-messaging:17.4.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+    implementation 'com.google.android.gms:play-services-ads:17.2.0'
     testİmplementation 'junit:junit:4.12'
     androidTestİmplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestİmplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'

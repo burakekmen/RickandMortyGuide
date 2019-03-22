@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "127444495280",
+    "firebase_url": "https://rickandmortyguide.firebaseio.com",
+    "project_id": "rickandmortyguide",
+    "storage_bucket": "rickandmortyguide.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127444495280:android:36e1055470297918",
+        "android_client_info": {
+          "package_name": "com.burakekmen.rickandmortyguide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127444495280-595m3t67np9he576d1lvlvco6hc865c4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.burakekmen.rickandmortyguide",
+            "certificate_hash": "2f5069507d26e20f9d8bf53f29593b53f4d5e8c4"
+          }
+        },
+        {
+          "client_id": "127444495280-94caojq0i9btaciopaqd5815da43lj3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiS6k5gvvWADpPu7Eza2pJbPjxa0NHuU0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127444495280-94caojq0i9btaciopaqd5815da43lj3c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
