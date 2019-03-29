@@ -12,11 +12,12 @@ import com.burakekmen.rickandmortyguide.ui.BaseActivity
 
 class Utils(context: Context) {
 
+
     var context = context
     private var dialog: SweetAlertDialog? = null
 
 
-    fun hideStatusBar(){
+    fun hideStatusBar() {
 
 //        (context as Activity).window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 //                (context as Activity).actionBar?.hide()
@@ -58,14 +59,14 @@ class Utils(context: Context) {
         dialog!!.setConfirmClickListener { sDialog ->
             if (isOnline()) {
                 sDialog.cancel()
-            }
-            else {
+            } else {
                 dialog!!.dismiss()
                 internetConnectionWarningShow()
             }
         }
         dialog!!.showCancelButton(true)
-        dialog!!.setCancelClickListener { sDialog -> sDialog.cancel()
+        dialog!!.setCancelClickListener { sDialog ->
+            sDialog.cancel()
             (context as Activity).finish()
         }
         dialog!!.setCanceledOnTouchOutside(false)
@@ -91,7 +92,7 @@ class Utils(context: Context) {
     }
 
 
-    fun splashWaitSomeMunite(){
+    fun splashWaitSomeMunite() {
         val secondsDelayed = 1
         Handler().postDelayed({
             context.startActivity(Intent(context, BaseActivity::class.java))
@@ -100,9 +101,9 @@ class Utils(context: Context) {
     }
 
 
-
-    fun getRandomNumber():Int{
+    fun getRandomNumber(): Int {
         return (1..30).random()
     }
+
 
 }

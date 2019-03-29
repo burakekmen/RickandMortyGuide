@@ -7,13 +7,20 @@
 
     <string name="tab_1">Characters</string>
     <string name="tab_2">Favourites</string>
-
+    <string name="tab_3">Episodes</string>
 
     <string-array name="sort_array">
         <item>All</item>
         <item>Alive</item>
         <item>Dead</item>
         <item>Unknown</item>
+    </string-array>
+
+
+    <string-array name="episode_season_array">
+        <item>Season 1</item>
+        <item>Season 2</item>
+        <item>Season 3</item>
     </string-array>
 
     <string name="alive">alive</string>
@@ -28,6 +35,17 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="message">Do you like us? If YES ( :D ) Could you give us a Play Store Comment?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="later">Later</string>
+    <string name="title">Rate Us</string>
+    <string name="play_link">http://play.google.com/store/apps/details?id=com.burakekmen.rickandmortyguide</string>
+
+    <string name="description">Please write your feedback</string>
+    <string name="defaultComment">This app is pretty cool !</string>
 
 
 </resources>

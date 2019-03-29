@@ -68,7 +68,9 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
             getSharedPreferences(SharedPreferenceNameEnum.RaMSharedPereference.toString(), Context.MODE_PRIVATE)
         val editor = sharedPref!!.edit()
         var viewCount = sharedPref!!.getInt("characterViewCount", 0) + 1
+        var totalViewCount = sharedPref!!.getInt("totalCharacterView", 0) + 1
         editor!!.putInt("characterViewCount", viewCount).apply()
+        editor.putInt("totalCharacterView", totalViewCount).apply()
 
 
         MobileAds.initialize(this, "ca-app-pub-1757058856747719~8412082886")

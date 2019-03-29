@@ -3,6 +3,7 @@ package com.burakekmen.rickandmortyguide.network
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.CharacterResponse
 import com.burakekmen.rickandmortyguide.model.EpisodeModel
+import com.burakekmen.rickandmortyguide.model.EpisodeResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -38,5 +39,7 @@ interface ApiInterface {
     @GET("episode/{episodesId}")
     fun getCharacterMultiEpisode(@Path("episodesId") episodesId: String?): Call<Array<EpisodeModel>>
 
+    @GET("episode/")
+    fun getCharacterEpisodeWithSeason(@Query("episode") episodeQuery: String?): Call<EpisodeResponse>
 
 }

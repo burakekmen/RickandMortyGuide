@@ -18,6 +18,7 @@ import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
+import com.burakekmen.rickandmortyguide.ui.fragment.EpisodeFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
@@ -33,11 +34,11 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     var fragmentManager: FragmentManager? = null
     var fragmentTransaction: FragmentTransaction? = null
-
     private var doubleBackToExitPressedOnce = false
     private var utils: Utils? = null
     private var characterFragment: CharacterListFragment? = null
     private var favouritesFragment: FavouriteFragment? = null
+    private var episodeFragment: EpisodeFragment? = null
     private var page = 0 // searchview içerisinde yazıyı göstermek ve apiye doğru isteği atabilmek için kullanıldı
     private var searchQuery = ""
     private var firstOpen = true
@@ -83,6 +84,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
             mFirebaseAnalytics!!.logEvent("sc_Characters", null)
             getToken()
+            rateAppShow()
         }
     }
 
@@ -119,6 +121,12 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                         getString(R.string.tab_2)
                     ).setActiveColor(getColor(R.color.tab2Color))
                 )
+                .addItem(
+                    BottomNavigationItem(
+                        R.drawable.tab3,
+                        getString(R.string.tab_3)
+                    ).setActiveColor(getColor(R.color.tab3Color))
+                )
                 .setFirstSelectedPosition(0)
                 .setMode(BottomNavigationBar.MODE_FIXED)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE)
@@ -127,6 +135,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
             activity_base_bottom_navigation_bar
                 .addItem(BottomNavigationItem(R.drawable.tab1, getString(R.string.tab_1)).setActiveColor("#420259"))
                 .addItem(BottomNavigationItem(R.drawable.tab2, getString(R.string.tab_2)).setActiveColor("#90542F"))
+                .addItem(BottomNavigationItem(R.drawable.tab3, getString(R.string.tab_3)).setActiveColor("#F26D2E"))
                 .setFirstSelectedPosition(0)
                 .setMode(BottomNavigationBar.MODE_FIXED)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE)
@@ -161,6 +170,18 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     activity_base_spinnerSort.visibility = View.GONE
 
                     mFirebaseAnalytics!!.logEvent("sc_Favourites", null)
+
+                } else if (position == 2) {
+                    if (episodeFragment == null)
+                        episodeFragment = EpisodeFragment()
+
+                    transaction.replace(R.id.activity_base_fragment, episodeFragment!!).commit()
+
+                    page = 3
+                    activity_base_searchView?.visibility = View.GONE
+                    activity_base_spinnerSort.visibility = View.GONE
+
+                    mFirebaseAnalytics!!.logEvent("sc_Episodes", null)
 
                 }
 
@@ -215,6 +236,17 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                 favouritesFragment = FavouriteFragment()
 
                 fragmentTransaction.replace(R.id.activity_base_fragment, favouritesFragment!!).commit()
+                fragmentManager.popBackStack()
+
+                page = 2
+            }
+            3 -> {
+                val fragmentManager = supportFragmentManager
+                val fragmentTransaction = fragmentManager.beginTransaction()
+
+                episodeFragment = EpisodeFragment()
+
+                fragmentTransaction.replace(R.id.activity_base_fragment, episodeFragment!!).commit()
                 fragmentManager.popBackStack()
 
                 page = 2
@@ -324,6 +356,24 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
     }
 
+
+    private fun rateAppShow() {
+        val sharedPref =
+            getSharedPreferences(SharedPreferenceNameEnum.RaMSharedPereference.toString(), Context.MODE_PRIVATE)
+        val editor = sharedPref!!.edit()
+        val isRateApp = sharedPref.getBoolean("isRateApp", false)
+        val totalViewCount = sharedPref.getInt("totalCharacterView", 0)
+
+
+        if ((totalViewCount % 10) == 0) {
+
+            if (!isRateApp) {
+            }
+        }
+
+    }
+
+
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
@@ -347,6 +397,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     override fun onResume() {
         if (!utils!!.isOnline())
             utils!!.internetConnectionWarningShow()
+
         super.onResume()
     }
 
