@@ -1,6 +1,7 @@
 package com.burakekmen.rickandmortyguide.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +16,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar
 import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
+import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.EpisodeFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment

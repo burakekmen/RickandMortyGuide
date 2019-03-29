@@ -2,7 +2,6 @@ package com.burakekmen.rickandmortyguide.network.messaging
 
 import android.app.NotificationManager
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
@@ -83,8 +82,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(NotificationCompat.BigTextStyle())
                 .setSmallIcon(R.mipmap.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_notification))
-                .setColor(getColor(R.color.alive_color))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true)
         } else {
@@ -94,8 +91,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(NotificationCompat.BigTextStyle())
                 .setSmallIcon(R.mipmap.notification_icon)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.notification_icon))
-                .setColor(resources.getColor(R.color.alive_color))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true)
         }
