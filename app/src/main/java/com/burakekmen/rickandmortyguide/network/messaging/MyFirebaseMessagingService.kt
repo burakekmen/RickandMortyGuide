@@ -90,7 +90,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentText(remoteMessage.notification!!.body)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(NotificationCompat.BigTextStyle())
-                .setSmallIcon(R.mipmap.notification_icon)
+                .setSmallIcon(R.mipmap.ic_notification)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true)
         }

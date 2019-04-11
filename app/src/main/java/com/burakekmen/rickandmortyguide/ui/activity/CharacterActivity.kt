@@ -176,7 +176,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
 
                             val characterEpisodeListAdapter =
-                                RcListCharacterEpisodesAdapter(response!!.toMutableList())
+                                RcListCharacterEpisodesAdapter(response!!.toMutableList(), applicationContext)
                             listeyeGonder(characterEpisodeListAdapter)
 
                             utils?.waitDialogHide()
@@ -207,7 +207,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
                             characterEpisode.add(response.body()!!)
 
                             val characterEpisodesAdapter =
-                                RcListCharacterEpisodesAdapter(characterEpisode)
+                                RcListCharacterEpisodesAdapter(characterEpisode, applicationContext)
                             listeyeGonder(characterEpisodesAdapter)
 
                             utils?.waitDialogHide()
@@ -284,7 +284,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
                 val editor = sharedPref!!.edit()
                 var viewCount = sharedPref!!.getInt("characterViewCount", 0)
 
-                if (viewCount >= 3) {
+                if (viewCount >= 4) {
                     if (mInterstitialAd.isLoaded) {
                         editor.putInt("characterViewCount", 0).apply()
                         mInterstitialAd.show()

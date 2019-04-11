@@ -30,6 +30,13 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
     private var singleLineFavouriteIds = ""
     private var fragmentDurdurulduMu = true
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        acilisHazirlikYap()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,8 +44,6 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
         // Inflate the layout for this fragment
         if (flayout == null)
             flayout = inflater.inflate(R.layout.fragment_favourite, container, false)
-
-        acilisHazirlikYap()
 
         return flayout
     }
@@ -76,7 +81,8 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.fragment_favourite_sadFace -> {
-                utils!!.actionErrorDialogShow("I am so sad because You have not favourite character!")
+                utils!!.actionErrorDialogShow("I am so sad! \nBecause\n You have not favourite character!")
+                //Toast.makeText(context, "I am so sad because You have not favourite character!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -97,7 +103,7 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
             fragment_favourite_rcList.visibility = View.VISIBLE
 
         } else {
-            utils!!.actionErrorDialogShow("You have not favourite character yet!")
+            //utils!!.actionErrorDialogShow("You have not favourite character yet!")
             fragment_favourite_rcList.visibility = View.GONE
             fragment_favourite_sadFace.visibility = View.VISIBLE
         }

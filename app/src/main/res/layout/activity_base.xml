@@ -6,7 +6,8 @@
         android:layout_height="match_parent"
         tools:context=".ui.BaseActivity"
         android:orientation="vertical"
-        android:background="@color/baseBackground">
+        android:background="@color/baseBackground"
+android:id="@+id/activity_base_linearLayout">
 
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -43,10 +44,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/activity_base_fragment"
-                android:layout_above="@id/activity_base_bottom_navigation_bar"
+                android:layout_above="@id/activity_base_adBanner"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
         />
+
+        <com.google.android.gms.ads.AdView
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/activity_base_adBanner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/activity_base_bottom_navigation_bar"
+                ads:adSize="BANNER"
+                ads:adUnitId="ca-app-pub-1757058856747719/3323407735">
+        </com.google.android.gms.ads.AdView>
 
         <com.ashokvarma.bottomnavigation.BottomNavigationBar
                 android:layout_gravity="bottom"

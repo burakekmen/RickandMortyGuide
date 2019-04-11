@@ -5,9 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Handler
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.ui.BaseActivity
+import com.burakekmen.rickandmortyguide.ui.activity.PolicyActivity
 
 
 class Utils(context: Context) {
@@ -15,7 +18,6 @@ class Utils(context: Context) {
 
     var context = context
     private var dialog: SweetAlertDialog? = null
-
 
     fun hideStatusBar() {
 
@@ -68,6 +70,82 @@ class Utils(context: Context) {
         dialog!!.setCancelClickListener { sDialog ->
             sDialog.cancel()
             (context as Activity).finish()
+        }
+        dialog!!.setCanceledOnTouchOutside(false)
+        dialog!!.show()
+
+    }
+
+
+    fun privacyPolicyShow() {
+
+        val sharedPref = context.getSharedPreferences(
+            SharedPreferenceNameEnum.RaMSharedPereference.toString(),
+            Context.MODE_PRIVATE
+        )
+
+        var isConfirmPolicy = sharedPref.getBoolean("isConfirmPolicy", false)
+
+        if(!isConfirmPolicy) {
+            dialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+            dialog!!.titleText = "Privacy Policy"
+            dialog!!.contentText = "Please read us Privacy Policy"
+            dialog!!.setNeutralText("Later")
+            dialog!!.confirmText = "Okey"
+            dialog!!.setConfirmClickListener { sDialog ->
+                if (isOnline()) {
+                    context!!.startActivity(Intent(context, PolicyActivity::class.java))
+                    sDialog.cancel()
+                } else {
+                    sDialog.cancel()
+                    internetConnectionWarningShow()
+                }
+            }
+            dialog!!.showCancelButton(false)
+            dialog!!.setNeutralClickListener { sDialog ->
+                //Toast.makeText(context, "Later!", Toast.LENGTH_SHORT).show()
+                sDialog.cancel()
+            }
+            dialog!!.setCanceledOnTouchOutside(false)
+            dialog!!.show()
+        }
+
+    }
+
+
+    fun rateUsDialogShow() {
+        dialog = SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+        dialog!!.setCustomImage(context.getDrawable(R.drawable.ic_notification))
+        dialog!!.titleText = "Rate Us"
+        dialog!!.contentText = "Do you LIKE US?\n\nCould you give us Play Store Comment If You Like Us?"
+        dialog!!.setNeutralText("Later")
+        dialog!!.confirmText = "Ok! Rick!"
+        dialog!!.setConfirmClickListener { sDialog ->
+            if (isOnline()) {
+
+                val sharedPref = context.getSharedPreferences(
+                    SharedPreferenceNameEnum.RaMSharedPereference.toString(),
+                    Context.MODE_PRIVATE
+                )
+                val editor = sharedPref!!.edit()
+                editor.putBoolean("isRateApp", true)
+                editor.putInt("totalCharacterView", 0)
+                editor.apply()
+
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("market://details?id=com.burakekmen.rickandmortyguide")
+                context.startActivity(intent)
+
+                sDialog.cancel()
+            } else {
+                sDialog.cancel()
+                internetConnectionWarningShow()
+            }
+        }
+        dialog!!.showCancelButton(false)
+        dialog!!.setNeutralClickListener { sDialog ->
+            //Toast.makeText(context, "Later!", Toast.LENGTH_SHORT).show()
+            sDialog.cancel()
         }
         dialog!!.setCanceledOnTouchOutside(false)
         dialog!!.show()

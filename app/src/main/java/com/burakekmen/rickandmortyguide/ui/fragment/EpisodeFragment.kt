@@ -91,7 +91,7 @@ class EpisodeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                         val episodes = response.body()!!
                         val episodesAdapter =
-                            RcListCharacterEpisodesAdapter(episodes.results)
+                            RcListCharacterEpisodesAdapter(episodes.results, context!!)
                         listeyeGonder(episodesAdapter)
 
                         utils?.waitDialogHide()

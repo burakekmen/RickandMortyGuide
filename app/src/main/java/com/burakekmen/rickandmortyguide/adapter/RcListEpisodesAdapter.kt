@@ -1,3 +1,0 @@
-package com.burakekmen.rickandmortyguide.adapter
-
-class RcListEpisodesAdapter

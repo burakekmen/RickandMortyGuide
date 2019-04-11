@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -20,6 +21,10 @@ import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.EpisodeFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -31,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_base.*
 class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQueryTextListener,
     AdapterView.OnItemSelectedListener {
 
+    lateinit var mAdView: AdView
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     var fragmentManager: FragmentManager? = null
     var fragmentTransaction: FragmentTransaction? = null
@@ -84,7 +90,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
             mFirebaseAnalytics!!.logEvent("sc_Characters", null)
             getToken()
-            rateAppShow()
+
+            setAdBanner()
         }
     }
 
@@ -98,6 +105,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
                 // Get new Instance ID token
                 userToken = task.result!!.token
+                Log.i("Firebase_Token", userToken)
             })
 
 
@@ -158,6 +166,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     activity_base_spinnerSort.visibility = View.VISIBLE
 
                     mFirebaseAnalytics!!.logEvent("sc_Characters", null)
+                    rateAppShow()
+                    utils!!.privacyPolicyShow()
 
                 } else if (position == 1) {
                     if (favouritesFragment == null)
@@ -170,6 +180,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     activity_base_spinnerSort.visibility = View.GONE
 
                     mFirebaseAnalytics!!.logEvent("sc_Favourites", null)
+                    rateAppShow()
+                    utils!!.privacyPolicyShow()
 
                 } else if (position == 2) {
                     if (episodeFragment == null)
@@ -182,7 +194,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                     activity_base_spinnerSort.visibility = View.GONE
 
                     mFirebaseAnalytics!!.logEvent("sc_Episodes", null)
-
+                    rateAppShow()
+                    utils!!.privacyPolicyShow()
                 }
 
                 fragmentManager!!.popBackStack()
@@ -250,6 +263,47 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                 fragmentManager.popBackStack()
 
                 page = 2
+            }
+        }
+    }
+
+
+    private fun setAdBanner() {
+
+        MobileAds.initialize(this, "ca-app-pub-1757058856747719~8412082886")
+
+        if (getString(R.string.isRelease).toBoolean()) {
+            //activity_base_adBanner!!.adUnitId = getString(R.string.adBaneerId_Release)
+            val adRequest = AdRequest.Builder().build()
+            activity_base_adBanner!!.loadAd(adRequest)
+        } else {
+            //activity_base_adBanner!!.adUnitId = getString(R.string.adBaneerId_Test)
+            val adRequest = AdRequest.Builder().build()
+            activity_base_adBanner!!.loadAd(adRequest)
+        }
+
+
+        activity_base_adBanner!!.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                //
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+
+            override fun onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
             }
         }
     }
@@ -365,12 +419,11 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         val totalViewCount = sharedPref.getInt("totalCharacterView", 0)
 
 
-        if ((totalViewCount % 10) == 0) {
-
+        if (totalViewCount >= 10) {
             if (!isRateApp) {
+                utils!!.rateUsDialogShow()
             }
         }
-
     }
 
 

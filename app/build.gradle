@@ -5,22 +5,62 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+def getDateTime() {
+    DateFormat df = new SimpleDateFormat("dd-MM-yyyy-HH.mm")
+    return df.format(new Date())
+}
+
+def isTestMode = false
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.burakekmen.rickandmortyguide"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.1"
+        versionCode 7
+        versionName "1.1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            if (isTestMode) {
+                buildConfigField "Boolean", "IS_TEST_MODE", "true"
+
+            } else {
+                buildConfigField "Boolean", "IS_TEST_MODE", "true"
+            }
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (isTestMode) {
+                buildConfigField "Boolean", "IS_TEST_MODE", "true"
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            } else {
+                buildConfigField "Boolean", "IS_TEST_MODE", "false"
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+
         }
     }
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.all {
+                if (isTestMode) {
+                    outputFileName = "rickAndMorty-${getDateTime()}-test-v${variant.versionName}.apk"
+                } else {
+                    outputFileName = "rickAndMorty-${getDateTime()}-prod-v${variant.versionName}.apk"
+                }
+            }
+        }
+    }
+
 }
 
 dependencies {

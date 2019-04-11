@@ -12,8 +12,11 @@ import retrofit2.http.Query
 interface ApiInterface {
 
 
-    @GET("character/{id}")
-    fun getSingleCharacter(@Path("id") id: Int?): Call<CharacterModel>
+    @GET("character/{characterId}")
+    fun getSingleCharacter(@Path("characterId") characterId: String?): Call<CharacterModel>
+
+    @GET("character/{charactersId}")
+    fun getMultiCharacter(@Path("charactersId") charactersId: String?): Call<Array<CharacterModel>>
 
     @GET("character/")
     fun getCharacterPage(@Query("page") page: Int?): Call<CharacterResponse>
