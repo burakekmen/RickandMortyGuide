@@ -63,7 +63,7 @@
                 <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="STATUS"
+                        android:text="@string/interfaceStringsStatus"
                         android:fontFamily="@font/misfits_rick_and_morty"
                         android:textColor="@color/character_item_nameColor"
                         android:layout_weight="1"
@@ -94,7 +94,7 @@
                 <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="SPECIES"
+                        android:text="@string/interfaceStringsSpecies"
                         android:fontFamily="@font/misfits_rick_and_morty"
                         android:textColor="@color/character_item_nameColor"
                         android:layout_weight="1"
@@ -125,7 +125,7 @@
                 <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="GENDER"
+                        android:text="@string/interfaceStringsGender"
                         android:fontFamily="@font/misfits_rick_and_morty"
                         android:textColor="@color/character_item_nameColor"
                         android:layout_weight="1"
@@ -147,6 +147,7 @@
 
             <LinearLayout
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -156,7 +157,7 @@
                 <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="ORIGIN"
+                        android:text="@string/interfaceStringsOrigin"
                         android:fontFamily="@font/misfits_rick_and_morty"
                         android:textColor="@color/character_item_nameColor"
                         android:layout_weight="1"
@@ -180,7 +181,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="2"
+            android:visibility="gone">
 
 
                 <TextView

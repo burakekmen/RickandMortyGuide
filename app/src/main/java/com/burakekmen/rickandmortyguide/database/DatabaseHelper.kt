@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 
-class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, DB_NAME, null, DB_VERSIOM) {
+class DatabaseHelper(context: Context?) :
+    SQLiteOpenHelper(context!!, DB_NAME, null, DB_VERSIOM) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         val CREATE_TABLE = "CREATE TABLE $TABLE_FAVOURITES " +
@@ -23,7 +23,7 @@ class DatabaseHelper(context: Context) :
     fun isHaveFavouriteCharacter(characterId: String): Boolean {
         var sonuc = false
 
-        var liste = getAllFavourites()
+        val liste = getAllFavourites()
 
         if (liste.contains(characterId.toInt()))
             sonuc = true
@@ -47,12 +47,12 @@ class DatabaseHelper(context: Context) :
     fun removeFavourite(characterId: String): Boolean {
         val db = this.writableDatabase
         var sonuc = 0
-        try {
+        sonuc = try {
             // id ye göre verimizi siliyoruz
             val where = "$CHARACTER_ID = $characterId"
-            sonuc = db.delete(TABLE_FAVOURITES, where, null)
+            db.delete(TABLE_FAVOURITES, where, null)
         } catch (e: Exception) {
-            sonuc = 0
+            0
         }
 
         db.close()
@@ -62,7 +62,7 @@ class DatabaseHelper(context: Context) :
 
     //get all users
     fun getAllFavourites(): MutableList<Int> {
-        var favourites = mutableListOf<Int>()
+        val favourites = mutableListOf<Int>()
         val db = readableDatabase
         val sutunlar = arrayOf<String>(CHARACTER_ID)
         val cursor = db.query(TABLE_FAVOURITES, sutunlar, null, null, null, null, null)

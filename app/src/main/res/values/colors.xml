@@ -15,6 +15,7 @@
     <color name="tab1Color">#420259</color>
     <color name="tab2Color">#70b347</color>
     <color name="tab3Color">#F26D2E</color>
+    <color name="tab4Color">#45b9ad</color>
 
     <color name="dead_color">#ff5349</color>
     <color name="alive_color">#187b09</color>
@@ -28,7 +29,14 @@
     <color name="noteDescriptionTextColor">#45b9ad</color>
     <color name="titleTextColor">#FFFFFF</color>
     <color name="descriptionTextColor">#A6FFFFFF</color>
+    <color name="searchViewHintColor">#A6FFFFFF</color>
+    <color name="searchViewTextColor">#fff</color>
     <color name="commentTextColor">#FFFFFF</color>
     <color name="hintTextColor">#55000000</color>
+
+
+
+    <color name="snackBarTextColor">#F26D2E</color>
+    <color name="snackBarBackgroundColor">#Fff</color>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.burakekmen.rickandmortyguide.adapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -12,14 +13,13 @@ import com.burakekmen.rickandmortyguide.ui.activity.CharacterActivity
 import com.burakekmen.rickandmortyguide.viewholder.RcListCharacterViewHolder
 import com.squareup.picasso.Picasso
 
-class RcListCharacterAdapter(context: Context?, characterResponse: CharacterResponse?) :
+class RcListCharacterAdapter(private var context: Context?, private val activity: Activity?, characterResponse: CharacterResponse?) :
     androidx.recyclerview.widget.RecyclerView.Adapter<RcListCharacterViewHolder>() {
 
-    private var context = context
     var response = characterResponse
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RcListCharacterViewHolder {
-        var inflater = LayoutInflater.from(parent.context).inflate(R.layout.character_list_item, parent, false)
+        val inflater = LayoutInflater.from(parent.context).inflate(R.layout.character_list_item, parent, false)
 
         return RcListCharacterViewHolder(inflater)
     }
@@ -27,9 +27,9 @@ class RcListCharacterAdapter(context: Context?, characterResponse: CharacterResp
 
     override fun onBindViewHolder(holder: RcListCharacterViewHolder, position: Int) {
 
-        var character = getItem(position)
+        val character = getItem(position)!!
 
-        Picasso.get().load(character!!.image).into(holder.characterImage)
+        Picasso.get().load(character.image).into(holder.characterImage)
         holder.characterName.text = character.name
         holder.characterStatus.text = character.status
         holder.characterSpecies.text = character.species
@@ -65,10 +65,11 @@ class RcListCharacterAdapter(context: Context?, characterResponse: CharacterResp
 
 
     private fun detaySayfasinaGit(character: CharacterModel?) {
-
-        var intent = Intent(context, CharacterActivity::class.java)
+        val intent = Intent(activity!!, CharacterActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.putExtra("selectedCharacter", character)
-        context?.startActivity(intent)
+        activity.startActivity(intent)
+        activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
 

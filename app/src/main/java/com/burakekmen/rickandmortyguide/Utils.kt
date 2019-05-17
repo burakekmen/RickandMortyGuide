@@ -6,29 +6,29 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
+import android.view.View
+import android.widget.TextView
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.ui.BaseActivity
 import com.burakekmen.rickandmortyguide.ui.activity.PolicyActivity
+import com.google.android.material.snackbar.Snackbar
 
 
-class Utils(context: Context) {
+class Utils(var context: Context?) {
 
 
-    var context = context
     private var dialog: SweetAlertDialog? = null
 
     fun hideStatusBar() {
-
-//        (context as Activity).window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-//                (context as Activity).actionBar?.hide()
-        (context as Activity).actionBar?.hide()
+        (context!! as Activity).actionBar?.hide()
     }
 
 
     fun isOnline(): Boolean {
-        val connectivityManager = context
+        val connectivityManager = context!!
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
@@ -37,7 +37,7 @@ class Utils(context: Context) {
 
 
     fun waitDialogShow() {
-        dialog = SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
+        dialog = SweetAlertDialog(context!!, SweetAlertDialog.PROGRESS_TYPE)
         dialog!!.progressHelper.barColor = Color.parseColor("#A5DC86")
         dialog!!.titleText = "Loading"
         dialog!!.setCancelable(false)
@@ -53,14 +53,14 @@ class Utils(context: Context) {
 
 
     fun internetConnectionWarningShow() {
-        dialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-        dialog!!.titleText = "Uppss.."
-        dialog!!.contentText = "Please check your internet connection!"
-        dialog!!.cancelText = "No, I will not!"
-        dialog!!.confirmText = "Ok, I will check it!"
+        dialog = SweetAlertDialog(context!!, SweetAlertDialog.WARNING_TYPE)
+        dialog!!.titleText = context!!.getString(R.string.networkConnectionErrorTitle)
+        dialog!!.contentText = context!!.getString(R.string.networkConnectionErrorContentText)
+        dialog!!.cancelText = context!!.getString(R.string.networkConnectionErrorCancelText)
+        dialog!!.confirmText = context!!.getString(R.string.networkConnectionErrorConfirmText)
         dialog!!.setConfirmClickListener { sDialog ->
             if (isOnline()) {
-                sDialog.cancel()
+                sDialog!!.dismiss()
             } else {
                 dialog!!.dismiss()
                 internetConnectionWarningShow()
@@ -68,8 +68,8 @@ class Utils(context: Context) {
         }
         dialog!!.showCancelButton(true)
         dialog!!.setCancelClickListener { sDialog ->
-            sDialog.cancel()
-            (context as Activity).finish()
+            sDialog!!.dismiss()
+            (context!! as Activity).finish()
         }
         dialog!!.setCanceledOnTouchOutside(false)
         dialog!!.show()
@@ -79,32 +79,33 @@ class Utils(context: Context) {
 
     fun privacyPolicyShow() {
 
-        val sharedPref = context.getSharedPreferences(
+        val sharedPref = context!!.getSharedPreferences(
             SharedPreferenceNameEnum.RaMSharedPereference.toString(),
             Context.MODE_PRIVATE
         )
 
-        var isConfirmPolicy = sharedPref.getBoolean("isConfirmPolicy", false)
+        val isConfirmPolicy = sharedPref.getBoolean("isConfirmPolicy", false)
 
-        if(!isConfirmPolicy) {
-            dialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-            dialog!!.titleText = "Privacy Policy"
-            dialog!!.contentText = "Please read us Privacy Policy"
-            dialog!!.setNeutralText("Later")
-            dialog!!.confirmText = "Okey"
+        if (!isConfirmPolicy) {
+            dialog = SweetAlertDialog(context!!, SweetAlertDialog.WARNING_TYPE)
+            dialog!!.titleText = context!!.getString(R.string.privacyPolicyMessageTitle)
+            dialog!!.contentText = context!!.getString(R.string.privacyPolicyMessageContentText)
+            dialog!!.setNeutralText(context!!.getString(R.string.privacyPolicyMessageNeutralMessage))
+            dialog!!.confirmText = context!!.getString(R.string.privacyPolicyMessageConfirmText)
             dialog!!.setConfirmClickListener { sDialog ->
                 if (isOnline()) {
-                    context!!.startActivity(Intent(context, PolicyActivity::class.java))
-                    sDialog.cancel()
+                    var intent = Intent(context!!, PolicyActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    context!!.startActivity(intent)
+                    sDialog!!.dismiss()
                 } else {
-                    sDialog.cancel()
+                    sDialog!!.dismiss()
                     internetConnectionWarningShow()
                 }
             }
             dialog!!.showCancelButton(false)
             dialog!!.setNeutralClickListener { sDialog ->
-                //Toast.makeText(context, "Later!", Toast.LENGTH_SHORT).show()
-                sDialog.cancel()
+                sDialog!!.dismiss()
             }
             dialog!!.setCanceledOnTouchOutside(false)
             dialog!!.show()
@@ -114,16 +115,20 @@ class Utils(context: Context) {
 
 
     fun rateUsDialogShow() {
-        dialog = SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-        dialog!!.setCustomImage(context.getDrawable(R.drawable.ic_notification))
-        dialog!!.titleText = "Rate Us"
-        dialog!!.contentText = "Do you LIKE US?\n\nCould you give us Play Store Comment If You Like Us?"
-        dialog!!.setNeutralText("Later")
-        dialog!!.confirmText = "Ok! Rick!"
+        dialog = SweetAlertDialog(context!!, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            dialog!!.setCustomImage(context!!.getDrawable(R.drawable.ic_notification))
+        } else
+            dialog!!.setCustomImage(context!!.resources.getDrawable(R.drawable.ic_notification))
+
+        dialog!!.titleText = context!!.getString(R.string.rateUsTitleText)
+        dialog!!.contentText = context!!.getString(R.string.rateUsContent)
+        dialog!!.setNeutralText(context!!.getString(R.string.rateusLaterText))
+        dialog!!.confirmText = context!!.getString(R.string.rateUsConfirmText)
         dialog!!.setConfirmClickListener { sDialog ->
             if (isOnline()) {
 
-                val sharedPref = context.getSharedPreferences(
+                val sharedPref = context!!.getSharedPreferences(
                     SharedPreferenceNameEnum.RaMSharedPereference.toString(),
                     Context.MODE_PRIVATE
                 )
@@ -133,19 +138,27 @@ class Utils(context: Context) {
                 editor.apply()
 
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse("market://details?id=com.burakekmen.rickandmortyguide")
-                context.startActivity(intent)
+                intent.data = Uri.parse(context!!.getString(R.string.rateUsPlayLink))
+                context!!.startActivity(intent)
 
-                sDialog.cancel()
+                sDialog!!.dismiss()
             } else {
-                sDialog.cancel()
+                sDialog!!.dismiss()
                 internetConnectionWarningShow()
             }
         }
         dialog!!.showCancelButton(false)
         dialog!!.setNeutralClickListener { sDialog ->
-            //Toast.makeText(context, "Later!", Toast.LENGTH_SHORT).show()
-            sDialog.cancel()
+            val sharedPref = context!!.getSharedPreferences(
+                SharedPreferenceNameEnum.RaMSharedPereference.toString(),
+                Context.MODE_PRIVATE
+            )
+            val editor = sharedPref!!.edit()
+            editor.putBoolean("isRateApp", false)
+            editor.putInt("totalCharacterView", 0)
+            editor.apply()
+
+            sDialog!!.dismiss()
         }
         dialog!!.setCanceledOnTouchOutside(false)
         dialog!!.show()
@@ -154,7 +167,7 @@ class Utils(context: Context) {
 
 
     fun actionFavouriteSuccessDialogShow(message: String) {
-        dialog = SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+        dialog = SweetAlertDialog(context!!, SweetAlertDialog.SUCCESS_TYPE)
         dialog!!.progressHelper.barColor = Color.parseColor("#A5DC86")
         dialog!!.titleText = message
         dialog!!.setCancelable(true)
@@ -162,7 +175,7 @@ class Utils(context: Context) {
     }
 
     fun actionErrorDialogShow(message: String) {
-        dialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+        dialog = SweetAlertDialog(context!!, SweetAlertDialog.WARNING_TYPE)
         dialog!!.progressHelper.barColor = Color.parseColor("#666600")
         dialog!!.titleText = message
         dialog!!.setCancelable(true)
@@ -173,14 +186,35 @@ class Utils(context: Context) {
     fun splashWaitSomeMunite() {
         val secondsDelayed = 1
         Handler().postDelayed({
-            context.startActivity(Intent(context, BaseActivity::class.java))
-            (context as Activity).finish()
+            context!!.startActivity(Intent(context!!, BaseActivity::class.java))
+            (context!! as Activity).finish()
         }, (secondsDelayed * 500).toLong())
     }
 
 
     fun getRandomNumber(): Int {
         return (1..30).random()
+    }
+
+
+    fun showSnackBarWithMessage(view: View?, message: String) {
+        val snackBar = Snackbar.make(
+            view!!, // Parent view
+            message, // Message to show
+            Snackbar.LENGTH_SHORT // How long to display the message.
+        )
+
+        val snackBarView = snackBar.view
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            snackBarView.setBackgroundColor(context!!.getColor(R.color.snackBarBackgroundColor))
+        }
+
+        val snackBarText = snackBarView.findViewById(R.id.snackbar_text) as TextView
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            snackBarText.setTextColor(context!!.getColor(R.color.snackBarTextColor))
+        }
+
+        snackBar.show()
     }
 
 

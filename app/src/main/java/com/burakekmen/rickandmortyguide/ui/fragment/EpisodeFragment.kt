@@ -14,8 +14,8 @@ import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListCharacterEpisodesAdapter
 import com.burakekmen.rickandmortyguide.model.EpisodeResponse
-import com.burakekmen.rickandmortyguide.network.ApiClient
-import com.burakekmen.rickandmortyguide.network.ApiInterface
+import com.burakekmen.rickandmortyguide.network.api.clients.ApiClient
+import com.burakekmen.rickandmortyguide.network.api.interfaces.ApiInterface
 import kotlinx.android.synthetic.main.fragment_episode.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -90,8 +90,9 @@ class EpisodeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     if (response!!.isSuccessful) {
 
                         val episodes = response.body()!!
+
                         val episodesAdapter =
-                            RcListCharacterEpisodesAdapter(episodes.results, context!!)
+                            RcListCharacterEpisodesAdapter(episodes.results, context!!, activity!!)
                         listeyeGonder(episodesAdapter)
 
                         utils?.waitDialogHide()

@@ -1,4 +1,4 @@
-package com.burakekmen.rickandmortyguide.network
+package com.burakekmen.rickandmortyguide.network.api.interfaces
 
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.CharacterResponse

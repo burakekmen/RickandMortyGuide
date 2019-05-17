@@ -1,5 +1,6 @@
 package com.burakekmen.rickandmortyguide.network.messaging
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
 import android.media.RingtoneManager
@@ -72,6 +73,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     /**
      * Handle time allotted to BroadcastReceivers.
      */
+    @SuppressLint("NewApi")
     private fun handleNow(remoteMessage: RemoteMessage?) {
         Log.d(TAG, "Short lived task is done.")
 
@@ -98,6 +100,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         notificationManager.notify(0, notificationBuilder.build())
+
     }
 
     /**

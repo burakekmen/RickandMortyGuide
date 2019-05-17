@@ -10,8 +10,8 @@ import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListEpisodeCharactersAdapter
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.EpisodeModel
-import com.burakekmen.rickandmortyguide.network.ApiClient
-import com.burakekmen.rickandmortyguide.network.ApiInterface
+import com.burakekmen.rickandmortyguide.network.api.clients.ApiClient
+import com.burakekmen.rickandmortyguide.network.api.interfaces.ApiInterface
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -28,7 +28,7 @@ class EpisodeActivity : AppCompatActivity() {
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private var utils: Utils? = null
     private var characterIds = mutableListOf<String>()
-    private var selectedEpisode:EpisodeModel?=null
+    private var selectedEpisode: EpisodeModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,25 +37,23 @@ class EpisodeActivity : AppCompatActivity() {
         acilisHazirlikYap()
         getExtras()
 
-        if(selectedEpisode != null)
+        if (selectedEpisode != null)
             verileriDoldur()
         else
-            utils!!.actionErrorDialogShow("Upps! Try again later!")
+            utils!!.actionErrorDialogShow(getString(R.string.actionErrorDialogMessage))
     }
 
 
-    init {
+    private fun acilisHazirlikYap() {
         utils = Utils(this)
         apiInterface = ApiClient.client?.create(ApiInterface::class.java)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-    }
 
-    private fun acilisHazirlikYap(){
         utils!!.hideStatusBar()
     }
 
-    private fun getExtras(){
-        var bundle = intent.extras
+    private fun getExtras() {
+        val bundle = intent.extras
 
         if (bundle != null) {
             selectedEpisode = bundle.getParcelable("selectedEpisode")
@@ -64,37 +62,34 @@ class EpisodeActivity : AppCompatActivity() {
     }
 
 
-
-    private fun verileriDoldur(){
+    private fun verileriDoldur() {
         activity_episode_txtEpisodeName.text = selectedEpisode!!.name
         activity_episode_txtEpisodeSeason.text = selectedEpisode!!.episode
 
         getCharacterIdsFromList()
 
-        if(utils!!.isOnline()){
-            if(characterIds!!.size > 1){
+        if (utils!!.isOnline()) {
+            if (characterIds.size > 1) {
                 getEpisodeCharacters(true)
-            }else{
+            } else {
                 getEpisodeCharacters(false)
             }
 
             setAdBanner()
-        }else{
+        } else {
             utils!!.internetConnectionWarningShow()
         }
     }
 
 
-
-    private fun getCharacterIdsFromList(){
-        for (i in 0 until selectedEpisode!!.characters!!.size) {
-            var character = selectedEpisode!!.characters!![i]
-            var index = character.lastIndexOf('/')
+    private fun getCharacterIdsFromList() {
+        for (i in 0 until selectedEpisode!!.characters.size) {
+            val character = selectedEpisode!!.characters[i]
+            val index = character.lastIndexOf('/')
 
             characterIds.add(character.substring(index + 1))
         }
     }
-
 
 
     private fun getEpisodeCharacters(isMulti: Boolean) {
@@ -115,7 +110,7 @@ class EpisodeActivity : AppCompatActivity() {
 
 
                             val episodeCharactersListAdapter =
-                                RcListEpisodeCharactersAdapter(applicationContext, response!!.toMutableList())
+                                RcListEpisodeCharactersAdapter(applicationContext!!, this@EpisodeActivity, response!!.toMutableList())
                             listeyeGonder(episodeCharactersListAdapter)
 
                             utils?.waitDialogHide()
@@ -146,7 +141,7 @@ class EpisodeActivity : AppCompatActivity() {
                             episodeCharacter.add(response.body()!!)
 
                             val episodeCharacterAdapter =
-                                RcListEpisodeCharactersAdapter(applicationContext, episodeCharacter)
+                                RcListEpisodeCharactersAdapter(applicationContext!!, this@EpisodeActivity, episodeCharacter)
                             listeyeGonder(episodeCharacterAdapter)
 
                             utils?.waitDialogHide()
@@ -169,11 +164,10 @@ class EpisodeActivity : AppCompatActivity() {
     @SuppressLint("WrongConstant")
     fun listeyeGonder(adapter: RcListEpisodeCharactersAdapter) {
         activity_episode_characterRcList.adapter = adapter
-        var mGridLayoutManager = GridLayoutManager(this@EpisodeActivity, 2)
+        val mGridLayoutManager = GridLayoutManager(this@EpisodeActivity, 2)
         activity_episode_characterRcList.layoutManager = mGridLayoutManager
         activity_episode_characterRcList.setHasFixedSize(false)
     }
-
 
 
     private fun setAdBanner() {
@@ -223,11 +217,17 @@ class EpisodeActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        if (!utils!!.isOnline())
-            utils!!.internetConnectionWarningShow()
         super.onResume()
 
+        if (!utils!!.isOnline())
+            utils!!.internetConnectionWarningShow()
     }
 
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+    }
 
 }

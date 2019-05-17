@@ -16,8 +16,8 @@ import com.burakekmen.rickandmortyguide.database.DatabaseHelper
 import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.EpisodeModel
-import com.burakekmen.rickandmortyguide.network.ApiClient
-import com.burakekmen.rickandmortyguide.network.ApiInterface
+import com.burakekmen.rickandmortyguide.network.api.clients.ApiClient
+import com.burakekmen.rickandmortyguide.network.api.interfaces.ApiInterface
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
@@ -53,22 +53,21 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    init {
+
+    fun acilisAyarlariniYap() {
         utils = Utils(this)
         apiInterface = ApiClient.client?.create(ApiInterface::class.java)
         dbHandler = DatabaseHelper(this)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-    }
 
-    fun acilisAyarlariniYap() {
         utils!!.hideStatusBar()
         activity_character_favButton?.setOnClickListener(this)
 
         sharedPref =
             getSharedPreferences(SharedPreferenceNameEnum.RaMSharedPereference.toString(), Context.MODE_PRIVATE)
         val editor = sharedPref!!.edit()
-        var viewCount = sharedPref!!.getInt("characterViewCount", 0) + 1
-        var totalViewCount = sharedPref!!.getInt("totalCharacterView", 0) + 1
+        val viewCount = sharedPref!!.getInt("characterViewCount", 0) + 1
+        val totalViewCount = sharedPref!!.getInt("totalCharacterView", 0) + 1
         editor!!.putInt("characterViewCount", viewCount).apply()
         editor.putInt("totalCharacterView", totalViewCount).apply()
 
@@ -81,24 +80,23 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
         else
             mInterstitialAd.adUnitId = getString(R.string.adId_Test)
         adListenerTanimla()
+        setAdBanner()
     }
 
 
     fun getExtras() {
 
-        var bundle = intent.extras
+        val bundle = intent.extras!!
 
-        if (bundle != null) {
-            character = bundle.getParcelable("selectedCharacter")
-            eventKaydet()
+        character = bundle.getParcelable("selectedCharacter")
+        eventKaydet()
 
-            isFavourite = dbHandler!!.isHaveFavouriteCharacter(character!!.id.toString())
+        isFavourite = dbHandler!!.isHaveFavouriteCharacter(character!!.id.toString())
 
-            if (isFavourite)
-                activity_character_favButton?.setImageResource(R.drawable.ic_like)
-            else
-                activity_character_favButton?.setImageResource(R.drawable.ic_like_inactive)
-        }
+        if (isFavourite)
+            activity_character_favButton?.setImageResource(R.drawable.ic_like)
+        else
+            activity_character_favButton?.setImageResource(R.drawable.ic_like_inactive)
     }
 
 
@@ -150,8 +148,8 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getEpisodeIdsFromList() {
         for (i in 0 until character!!.episode!!.size) {
-            var episode = character!!.episode!![i]
-            var index = episode.lastIndexOf('/')
+            val episode = character!!.episode!![i]
+            val index = episode.lastIndexOf('/')
 
             episodeIds.add(episode.substring(index + 1))
         }
@@ -176,7 +174,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
 
                             val characterEpisodeListAdapter =
-                                RcListCharacterEpisodesAdapter(response!!.toMutableList(), applicationContext)
+                                RcListCharacterEpisodesAdapter(response!!.toMutableList(), applicationContext!!, this@CharacterActivity)
                             listeyeGonder(characterEpisodeListAdapter)
 
                             utils?.waitDialogHide()
@@ -207,7 +205,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
                             characterEpisode.add(response.body()!!)
 
                             val characterEpisodesAdapter =
-                                RcListCharacterEpisodesAdapter(characterEpisode, applicationContext)
+                                RcListCharacterEpisodesAdapter(characterEpisode, applicationContext!!, this@CharacterActivity)
                             listeyeGonder(characterEpisodesAdapter)
 
                             utils?.waitDialogHide()
@@ -230,7 +228,7 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     @SuppressLint("WrongConstant")
     fun listeyeGonder(adapter: RcListCharacterEpisodesAdapter) {
         activity_character_episodeList.adapter = adapter
-        var myLayoutManager = LinearLayoutManager(this@CharacterActivity, LinearLayoutManager.VERTICAL, false)
+        val myLayoutManager = LinearLayoutManager(this@CharacterActivity, LinearLayoutManager.VERTICAL, false)
         activity_character_episodeList.layoutManager = myLayoutManager
         activity_character_episodeList.setHasFixedSize(true)
 
@@ -258,17 +256,17 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
     @SuppressLint("ShowToast")
     private fun addFavourite(characterId: Int) {
-        var sonuc = dbHandler!!.addFavourite(characterId.toString())
+        val sonuc = dbHandler!!.addFavourite(characterId.toString())
 
         if (sonuc)
-            utils!!.actionFavouriteSuccessDialogShow("This character is your favourite character now")
+            utils!!.actionFavouriteSuccessDialogShow(getString(R.string.characterFavouriteMessage))
     }
 
     private fun removeFavourite(characterId: Int) {
-        var sonuc = dbHandler!!.removeFavourite(characterId.toString())
+        val sonuc = dbHandler!!.removeFavourite(characterId.toString())
 
         if (sonuc)
-            utils!!.actionFavouriteSuccessDialogShow("This character is NOT your favourite character now")
+            utils!!.actionFavouriteSuccessDialogShow(getString(R.string.characterRemoveFavouriteMessage))
     }
 
 
@@ -278,11 +276,49 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
+
+    private fun setAdBanner() {
+        if (getString(R.string.isRelease).toBoolean()) {
+            val adRequest = AdRequest.Builder().build()
+            activity_character_adBanner!!.loadAd(adRequest)
+        } else {
+            val adRequest = AdRequest.Builder().build()
+            activity_character_adBanner!!.loadAd(adRequest)
+        }
+
+
+        activity_character_adBanner!!.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                //
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+
+            override fun onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+        }
+    }
+
+
+
     fun adListenerTanimla() {
         mInterstitialAd.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 val editor = sharedPref!!.edit()
-                var viewCount = sharedPref!!.getInt("characterViewCount", 0)
+                val viewCount = sharedPref!!.getInt("characterViewCount", 0)
 
                 if (viewCount >= 4) {
                     if (mInterstitialAd.isLoaded) {
@@ -313,12 +349,17 @@ class CharacterActivity : AppCompatActivity(), View.OnClickListener {
 
 
     override fun onResume() {
-        if (!utils!!.isOnline())
-            utils!!.internetConnectionWarningShow()
         super.onResume()
 
+        if (!utils!!.isOnline())
+            utils!!.internetConnectionWarningShow()
     }
 
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+    }
 
 }
 

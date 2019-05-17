@@ -19,13 +19,10 @@ class SplashActivity : AppCompatActivity() {
     }
 
 
-
-    init {
-        utils = Utils(this)
-    }
-
-
     fun acilisAyarlarınıYap(){
+
+        utils = Utils(this)
+
         utils!!.splashWaitSomeMunite()
 
         val pctrNumber = utils!!.getRandomNumber()
@@ -33,7 +30,6 @@ class SplashActivity : AppCompatActivity() {
         val r = resources.getIdentifier(pictureResource, "drawable", packageName)
         activity_splash_image?.setImageResource(r)
     }
-
 
 
 }

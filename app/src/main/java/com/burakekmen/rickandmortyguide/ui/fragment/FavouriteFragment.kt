@@ -12,8 +12,8 @@ import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.adapter.RcListFavouriteAdapter
 import com.burakekmen.rickandmortyguide.database.DatabaseHelper
 import com.burakekmen.rickandmortyguide.model.CharacterModel
-import com.burakekmen.rickandmortyguide.network.ApiClient
-import com.burakekmen.rickandmortyguide.network.ApiInterface
+import com.burakekmen.rickandmortyguide.network.api.clients.ApiClient
+import com.burakekmen.rickandmortyguide.network.api.interfaces.ApiInterface
 import kotlinx.android.synthetic.main.fragment_favourite.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -81,8 +81,7 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.fragment_favourite_sadFace -> {
-                utils!!.actionErrorDialogShow("I am so sad! \nBecause\n You have not favourite character!")
-                //Toast.makeText(context, "I am so sad because You have not favourite character!", Toast.LENGTH_SHORT).show()
+                utils!!.actionErrorDialogShow(getString(R.string.haveNotFavouriteDialogMessage))
             }
         }
     }
@@ -103,7 +102,6 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
             fragment_favourite_rcList.visibility = View.VISIBLE
 
         } else {
-            //utils!!.actionErrorDialogShow("You have not favourite character yet!")
             fragment_favourite_rcList.visibility = View.GONE
             fragment_favourite_sadFace.visibility = View.VISIBLE
         }
@@ -129,7 +127,7 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
 
 
                             val characterFavouriteListAdapter =
-                                RcListFavouriteAdapter(context, response!!.toMutableList())
+                                RcListFavouriteAdapter(context!!, activity!!,response!!.toMutableList())
                             listeyeGonder(characterFavouriteListAdapter)
 
                             utils?.waitDialogHide()
@@ -161,7 +159,7 @@ class FavouriteFragment : Fragment(), View.OnClickListener {
 
 
                             val characterFavouriteListAdapter =
-                                RcListFavouriteAdapter(context, favouriteCharaacter)
+                                RcListFavouriteAdapter(context!!, activity!!,favouriteCharaacter)
                             listeyeGonder(characterFavouriteListAdapter)
 
                             utils?.waitDialogHide()

@@ -75,7 +75,7 @@
                               android:orientation="horizontal" android:layout_weight="2"
                               android:layout_marginLeft="10dp"
                               android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Status:"
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/interfaceStringsStatus"
                               android:layout_weight="1" android:textAlignment="textStart"
                               android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
                               android:textColor="@color/character_item_nameColor"/>
@@ -92,7 +92,7 @@
                               android:orientation="horizontal" android:layout_weight="2"
                               android:layout_marginLeft="10dp"
                               android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Species:"
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/interfaceStringsSpecies"
                               android:layout_weight="1" android:textAlignment="textStart"
                               android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
                               android:textColor="@color/character_item_nameColor"/>
@@ -109,7 +109,7 @@
                               android:orientation="horizontal" android:layout_weight="2"
                               android:layout_marginLeft="10dp"
                               android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Gender:"
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/interfaceStringsGender"
                               android:layout_weight="1" android:textAlignment="textStart"
                               android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
                               android:textColor="@color/character_item_nameColor"/>
@@ -126,7 +126,7 @@
                               android:orientation="horizontal" android:layout_weight="2"
                               android:layout_marginLeft="10dp"
                               android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="Origin:"
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/interfaceStringsOrigin"
                               android:layout_weight="1" android:textAlignment="textStart"
                               android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
                               android:textColor="@color/character_item_nameColor"/>
@@ -144,7 +144,7 @@
                               android:layout_marginLeft="10dp"
                               android:layout_marginRight="10dp" android:layout_marginBottom="7dp">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                              android:text="Last Location:"
+                              android:text="@string/interfaceStringsLastLocation"
                               android:layout_weight="1" android:textAlignment="textStart"
                               android:fontFamily="@font/misfits_rick_and_morty" android:textSize="20dp"
                               android:textColor="@color/character_item_nameColor"/>
@@ -156,6 +156,16 @@
                               android:textSize="20dp"
                               android:textColor="@color/character_item_textFieldColor"/>
                 </LinearLayout>
+
+                <com.google.android.gms.ads.AdView
+                        android:layout_centerHorizontal="true"
+                        xmlns:ads="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/activity_character_adBanner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        ads:adSize="BANNER"
+                        android:layout_gravity="center"
+                        ads:adUnitId="ca-app-pub-1757058856747719/3323407735"/>
 
             </LinearLayout>
 

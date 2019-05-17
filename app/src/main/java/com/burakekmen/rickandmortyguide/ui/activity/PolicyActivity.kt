@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import com.burakekmen.rickandmortyguide.BuildConfig
 import com.burakekmen.rickandmortyguide.R
 import com.burakekmen.rickandmortyguide.Utils
 import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
@@ -31,21 +32,19 @@ class PolicyActivity : AppCompatActivity() {
             webviewTanimla()
             preferenceGUpdate()
             eventKaydet()
-        }
-        else
+        } else
             utils!!.internetConnectionWarningShow()
     }
 
 
     private fun webviewTanimla() {
-        var webViewClient = WebViewClient()
+        val webViewClient = WebViewClient()
         activity_policy_webview?.webViewClient = webViewClient
-        activity_policy_webview?.loadUrl(getString(R.string.privacy_policy_url))
+        activity_policy_webview?.loadUrl(BuildConfig.PRIVACY_POLICY_URL)
     }
 
 
-
-    private fun preferenceGUpdate(){
+    private fun preferenceGUpdate() {
         val sharedPref = getSharedPreferences(
             SharedPreferenceNameEnum.RaMSharedPereference.toString(),
             Context.MODE_PRIVATE
@@ -54,7 +53,6 @@ class PolicyActivity : AppCompatActivity() {
         editor.putBoolean("isConfirmPolicy", true)
         editor.apply()
     }
-
 
 
     fun eventKaydet() {

@@ -37,6 +37,10 @@
             android:theme="@style/Theme.AppCompat.NoActionBar"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:icon">
+        <activity
+                android:name="com.google.android.gms.ads.AdActivity"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                tools:replace="android:theme"/>
         <activity android:name=".ui.activity.EpisodeActivity"
                   android:screenOrientation="portrait">
         </activity>
@@ -73,7 +77,7 @@
 
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
-                android:value="ca-app-pub-1757058856747719~8412082886"/>
+                android:value="${adAppId}"/>
     </application>
 
 </manifest>

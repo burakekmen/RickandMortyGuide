@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.FragmentManager
@@ -21,16 +23,17 @@ import com.burakekmen.rickandmortyguide.enums.SharedPreferenceNameEnum
 import com.burakekmen.rickandmortyguide.ui.fragment.CharacterListFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.EpisodeFragment
 import com.burakekmen.rickandmortyguide.ui.fragment.FavouriteFragment
+import com.burakekmen.rickandmortyguide.ui.fragment.SettingsFragment
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_base.*
+import kotlinx.android.synthetic.main.custom_searchview.*
 
 
 class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQueryTextListener,
@@ -45,6 +48,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     private var characterFragment: CharacterListFragment? = null
     private var favouritesFragment: FavouriteFragment? = null
     private var episodeFragment: EpisodeFragment? = null
+    private var settingsFragment:SettingsFragment?=null
     private var page = 0 // searchview içerisinde yazıyı göstermek ve apiye doğru isteği atabilmek için kullanıldı
     private var searchQuery = ""
     private var firstOpen = true
@@ -59,25 +63,22 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     }
 
 
-    init {
-        utils = Utils(this)
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-    }
-
-
     @SuppressLint("ResourceAsColor")
     fun acilisAyarlariniYap() {
+        utils = Utils(this)
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
         utils!!.hideStatusBar()
         spinnerTanimla()
 
         if (!utils!!.isOnline()) {
             bottomBarTanimla()
+            fragmentManager = supportFragmentManager
+            fragmentTransaction = fragmentManager!!.beginTransaction()
+
+            setAdBanner()
         } else {
-            activity_base_searchView?.setOnClickListener(this)
-            activity_base_searchView?.setOnQueryTextListener(this)
-            activity_base_searchView?.onActionViewExpanded()
-            activity_base_searchView?.isFocusable = false
-            activity_base_searchView?.queryHint = "Bla bla bla .."
+            setSearchViewComponent()
 
             bottomBarTanimla()
 
@@ -95,6 +96,30 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         }
     }
 
+
+    private fun setSearchViewComponent(){
+        activity_base_searchView?.setOnClickListener(this)
+        iv_clear_text?.setOnClickListener(this)
+
+        setCustomSearchViewEditorAction()
+    }
+
+    private fun setCustomSearchViewEditorAction(){
+        edt_search_text?.setOnEditorActionListener{ v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                searchQuery = edt_search_text!!.text.toString()
+                fragmentOpen()
+
+                if(searchQuery != "")
+                    iv_clear_text?.visibility = View.VISIBLE
+                else
+                    iv_clear_text?.visibility = View.GONE
+                true
+            } else {
+                false
+            }
+        }
+    }
 
     private fun getToken() {
         FirebaseInstanceId.getInstance().instanceId
@@ -135,8 +160,14 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                         getString(R.string.tab_3)
                     ).setActiveColor(getColor(R.color.tab3Color))
                 )
+                .addItem(
+                    BottomNavigationItem(
+                        R.drawable.tab4,
+                        getString(R.string.tab_4)
+                    ).setActiveColor(getColor(R.color.tab4Color))
+                )
                 .setFirstSelectedPosition(0)
-                .setMode(BottomNavigationBar.MODE_FIXED)
+                .setMode(BottomNavigationBar.MODE_DEFAULT)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE)
                 .initialise()
         } else {
@@ -144,58 +175,80 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
                 .addItem(BottomNavigationItem(R.drawable.tab1, getString(R.string.tab_1)).setActiveColor("#420259"))
                 .addItem(BottomNavigationItem(R.drawable.tab2, getString(R.string.tab_2)).setActiveColor("#90542F"))
                 .addItem(BottomNavigationItem(R.drawable.tab3, getString(R.string.tab_3)).setActiveColor("#F26D2E"))
+                .addItem(BottomNavigationItem(R.drawable.tab4, getString(R.string.tab_4)).setActiveColor("#45b9ad"))
                 .setFirstSelectedPosition(0)
-                .setMode(BottomNavigationBar.MODE_FIXED)
+                .setMode(BottomNavigationBar.MODE_DEFAULT)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE)
                 .initialise()
         }
 
 
-        activity_base_bottom_navigation_bar.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
+        activity_base_bottom_navigation_bar?.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabSelected(position: Int) {
 
-                var transaction = fragmentManager!!.beginTransaction()
-                if (position == 0) {
-                    if (characterFragment == null)
-                        characterFragment = CharacterListFragment()
+                val transaction = fragmentManager!!.beginTransaction()
+                when (position) {
+                    0 -> {
+                        if (characterFragment == null)
+                            characterFragment = CharacterListFragment()
 
-                    transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
+                        transaction.replace(R.id.activity_base_fragment, characterFragment!!).commit()
 
-                    page = 1
-                    activity_base_searchView?.visibility = View.VISIBLE
-                    activity_base_spinnerSort.visibility = View.VISIBLE
+                        page = 1
+                        activity_base_searchView?.visibility = View.VISIBLE
+                        activity_base_spinnerSort?.visibility = View.VISIBLE
 
-                    mFirebaseAnalytics!!.logEvent("sc_Characters", null)
-                    rateAppShow()
-                    utils!!.privacyPolicyShow()
+                        mFirebaseAnalytics!!.logEvent("sc_Characters", null)
+                        rateAppShow()
 
-                } else if (position == 1) {
-                    if (favouritesFragment == null)
-                        favouritesFragment = FavouriteFragment()
+                        activity_base_adBanner?.visibility = View.VISIBLE
+                    }
+                    1 -> {
+                        if (favouritesFragment == null)
+                            favouritesFragment = FavouriteFragment()
 
-                    transaction.replace(R.id.activity_base_fragment, favouritesFragment!!).commit()
+                        transaction.replace(R.id.activity_base_fragment, favouritesFragment!!).commit()
 
-                    page = 2
-                    activity_base_searchView?.visibility = View.GONE
-                    activity_base_spinnerSort.visibility = View.GONE
+                        page = 2
+                        activity_base_searchView?.visibility = View.GONE
+                        activity_base_spinnerSort?.visibility = View.GONE
 
-                    mFirebaseAnalytics!!.logEvent("sc_Favourites", null)
-                    rateAppShow()
-                    utils!!.privacyPolicyShow()
+                        mFirebaseAnalytics!!.logEvent("sc_Favourites", null)
+                        rateAppShow()
 
-                } else if (position == 2) {
-                    if (episodeFragment == null)
-                        episodeFragment = EpisodeFragment()
+                        activity_base_adBanner?.visibility = View.VISIBLE
+                    }
+                    2 -> {
+                        if (episodeFragment == null)
+                            episodeFragment = EpisodeFragment()
 
-                    transaction.replace(R.id.activity_base_fragment, episodeFragment!!).commit()
+                        transaction.replace(R.id.activity_base_fragment, episodeFragment!!).commit()
 
-                    page = 3
-                    activity_base_searchView?.visibility = View.GONE
-                    activity_base_spinnerSort.visibility = View.GONE
+                        page = 3
+                        activity_base_searchView?.visibility = View.GONE
+                        activity_base_spinnerSort?.visibility = View.GONE
 
-                    mFirebaseAnalytics!!.logEvent("sc_Episodes", null)
-                    rateAppShow()
-                    utils!!.privacyPolicyShow()
+                        mFirebaseAnalytics!!.logEvent("sc_Episodes", null)
+                        rateAppShow()
+
+                        activity_base_adBanner?.visibility = View.VISIBLE
+                    }
+                    3 -> {
+                        //Toast.makeText(this@BaseActivity, getString(R.string.comingSoonMessage), Toast.LENGTH_SHORT).show()
+                        if (settingsFragment == null)
+                            settingsFragment = SettingsFragment()
+
+                        transaction.replace(R.id.activity_base_fragment, settingsFragment!!).commit()
+
+                        page = 4
+                        activity_base_searchView?.visibility = View.GONE
+                        activity_base_spinnerSort?.visibility = View.GONE
+
+                        mFirebaseAnalytics!!.logEvent("sc_Settings", null)
+                        rateAppShow()
+
+                        activity_base_adBanner?.visibility = View.GONE
+                    }
                 }
 
                 fragmentManager!!.popBackStack()
@@ -225,6 +278,9 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
 
     fun fragmentOpen() {
+        if(searchQuery == "text" || searchQuery == "Text")
+            searchQuery = "morty"
+
         when (page) {
             1 -> {
                 val fragmentManager = supportFragmentManager
@@ -289,7 +345,6 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
             }
 
             override fun onAdFailedToLoad(errorCode: Int) {
-                // Code to be executed when an ad request fails.
             }
 
             override fun onAdOpened() {
@@ -323,7 +378,18 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     }
 
     override fun onClick(v: View?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        when(v!!.id){
+            R.id.activity_base_searchView ->{
+                if(edt_search_text?.text.toString() != "")
+                    iv_clear_text?.visibility = View.VISIBLE
+                else
+                    iv_clear_text?.visibility = View.GONE
+            }
+            R.id.iv_clear_text->{
+                edt_search_text?.text!!.clear()
+                iv_clear_text?.visibility = View.GONE
+            }
+        }
     }
 
 
@@ -334,8 +400,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-        var sortItem = parent!!.selectedItemPosition
-        var transaction = fragmentManager?.beginTransaction()
+        val sortItem = parent!!.selectedItemPosition
+        val transaction = fragmentManager?.beginTransaction()
 
         if (!firstOpen) {
             when (sortItem) {
@@ -411,6 +477,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
     }
 
 
+    @SuppressLint("CommitPrefEdits")
     private fun rateAppShow() {
         val sharedPref =
             getSharedPreferences(SharedPreferenceNameEnum.RaMSharedPereference.toString(), Context.MODE_PRIVATE)
@@ -419,7 +486,7 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         val totalViewCount = sharedPref.getInt("totalCharacterView", 0)
 
 
-        if (totalViewCount >= 10) {
+        if (totalViewCount > 10) {
             if (!isRateApp) {
                 utils!!.rateUsDialogShow()
             }
@@ -433,11 +500,8 @@ class BaseActivity : AppCompatActivity(), View.OnClickListener, SearchView.OnQue
         } else if (!doubleBackToExitPressedOnce) {
             this.doubleBackToExitPressedOnce = true
 
-            Snackbar.make(
-                activity_base_layout, // Parent view
-                "Please click Back button again for exit!", // Message to show
-                Snackbar.LENGTH_SHORT // How long to display the message.
-            ).show()
+            Toast.makeText(this, getString(R.string.backPressedMessage), Toast.LENGTH_SHORT).show()
+            //utils!!.showSnackBarWithMessage(this@BaseActivity.activity_base_layout, getString(R.string.backPressedMessage))
 
             Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
         } else {

@@ -15,8 +15,8 @@ import com.burakekmen.rickandmortyguide.adapter.RcListCharacterAdapter
 import com.burakekmen.rickandmortyguide.model.CharacterModel
 import com.burakekmen.rickandmortyguide.model.CharacterResponse
 import com.burakekmen.rickandmortyguide.model.PaginationScrollListener
-import com.burakekmen.rickandmortyguide.network.ApiClient
-import com.burakekmen.rickandmortyguide.network.ApiInterface
+import com.burakekmen.rickandmortyguide.network.api.clients.ApiClient
+import com.burakekmen.rickandmortyguide.network.api.interfaces.ApiInterface
 import kotlinx.android.synthetic.main.fragment_character_list.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -126,7 +126,7 @@ class CharacterListFragment : Fragment() {
                                 characterListAdapter!!.response!!.results = characterResponse!!.results
                                 fragment_character_rcList.adapter!!.notifyDataSetChanged()
                             } else {
-                                characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                characterListAdapter = RcListCharacterAdapter(context!!, activity!!, characterResponse!!)
                                 listeyeGonder(characterListAdapter!!)
                             }
 
@@ -178,7 +178,7 @@ class CharacterListFragment : Fragment() {
                                     characterListAdapter!!.response!!.results = characterResponse!!.results
                                     fragment_character_rcList.adapter!!.notifyDataSetChanged()
                                 } else {
-                                    characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                    characterListAdapter = RcListCharacterAdapter(context!!, activity!!,characterResponse!!)
                                     listeyeGonder(characterListAdapter!!)
                                 }
                                 utils?.waitDialogHide()
@@ -229,7 +229,7 @@ class CharacterListFragment : Fragment() {
                                 characterListAdapter!!.response!!.results = characterResponse!!.results
                                 fragment_character_rcList.adapter!!.notifyDataSetChanged()
                             } else {
-                                characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                characterListAdapter = RcListCharacterAdapter(context!!, activity!!, characterResponse!!)
                                 listeyeGonder(characterListAdapter!!)
                             }
                             utils?.waitDialogHide()
@@ -280,7 +280,7 @@ class CharacterListFragment : Fragment() {
                                     characterListAdapter!!.response!!.results = characterResponse!!.results
                                     fragment_character_rcList.adapter!!.notifyDataSetChanged()
                                 } else {
-                                    characterListAdapter = RcListCharacterAdapter(context, characterResponse)
+                                    characterListAdapter = RcListCharacterAdapter(context!!, activity!!, characterResponse!!)
                                     listeyeGonder(characterListAdapter!!)
                                 }
                                 utils?.waitDialogHide()
@@ -310,9 +310,9 @@ class CharacterListFragment : Fragment() {
 
         fragment_character_rcList.adapter = adapter
 
-        myLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+        myLayoutManager = LinearLayoutManager(
             fragmentActivity,
-            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            LinearLayoutManager.VERTICAL,
             false
         )
         fragment_character_rcList.layoutManager = myLayoutManager
